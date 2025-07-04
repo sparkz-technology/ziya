@@ -1,0 +1,26 @@
+<variant
+    name="debug"
+    package="com.example.ziya"
+    minSdkVersion="24"
+    targetSdkVersion="34"
+    debuggable="true"
+    mergedManifest="build\intermediates\merged_manifest\debug\processDebugMainManifest\AndroidManifest.xml"
+    partialResultsDir="build\intermediates\unit_test_lint_partial_results\debug\lintAnalyzeDebugUnitTest\out"
+    desugaredMethodsFiles="C:\Users\athik\.gradle\caches\8.9\transforms\608a77cad82c1a67ef0f59e1fc7bfd0c\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+  </sourceProviders>
+  <testSourceProviders>
+    <sourceProvider
+        manifests="src\test\AndroidManifest.xml"
+        javaDirectories="src\test\java;src\testDebug\java;src\test\kotlin;src\testDebug\kotlin"
+        assetsDirectories="src\test\assets;src\testDebug\assets"
+        unitTest="true"/>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      type="UNIT_TEST">
+  </artifact>
+</variant>

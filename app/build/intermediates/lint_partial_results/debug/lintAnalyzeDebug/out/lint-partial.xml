@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="partial_results">
+    <map id="UnsafeImplicitIntentLaunch">
+            <map id="actionsSent">
+                    <map id="android.settings.action.MANAGE_OVERLAY_PERMISSION (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/ziya/MainActivity.kt"
+                            line="29"
+                            column="30"
+                            startOffset="978"
+                            endLine="32"
+                            endColumn="18"
+                            endOffset="1120"/>
+                    </map>
+            </map>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.ziya.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <entry
+            name="model"
+            string="attr[colorPrimaryVariant(R)],color[purple_200(U),purple_500(U),purple_700(U),teal_200(U),teal_700(U),black(U),white(U)],drawable[ic_launcher_background(U),ic_launcher_foreground(U),ic_launcher_foreground_1(R),ic_orb(U)],id[startOverlayBtn(U)],layout[activity_main(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U)],style[Theme_Ziya(U),Theme_MaterialComponents_DayNight_DarkActionBar(R)],xml[data_extraction_rules(U),backup_rules(U)];9^a,e^8^9,f^8^9,11^12^2^3^7^4^5^6^0^1;;;"/>
+    </map>
+
+</incidents>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="incidents">
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 36"
+            oldString="34"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="13"
+            column="9"
+            startOffset="253"
+            endLine="13"
+            endColumn="23"
+            endOffset="267"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.application than 8.7.3 is available: 8.11.0">
+        <fix-replace
+            description="Change to 8.11.0"
+            family="Update versions"
+            oldString="8.7.3"
+            replacement="8.11.0"
+            priority="0"/>
+        <location
+            file="$HOME/Desktop/ziya/gradle/libs.versions.toml"
+            line="2"
+            column="7"
+            startOffset="17"
+            endLine="2"
+            endColumn="14"
+            endOffset="24"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.7.0"
+            replacement="1.7.1"
+            priority="0"/>
+        <location
+            file="$HOME/Desktop/ziya/gradle/libs.versions.toml"
+            line="8"
+            column="13"
+            startOffset="137"
+            endLine="8"
+            endColumn="20"
+            endOffset="144"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; SDK_INT is always >= 24">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/ziya/MainActivity.kt"
+            line="39"
+            column="13"
+            startOffset="1258"
+            endLine="39"
+            endColumn="59"
+            endOffset="1304"/>
+    </incident>
+
+    <incident
+        id="ClickableViewAccessibility"
+        severity="warning"
+        message="Custom view `OrbView` overrides `onTouchEvent` but not `performClick`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/ziya/OrbView.kt"
+            line="84"
+            column="18"
+            startOffset="2673"
+            endLine="84"
+            endColumn="30"
+            endOffset="2685"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Orb Overlay&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="11"
+            column="9"
+            startOffset="416"
+            endLine="11"
+            endColumn="41"
+            endOffset="448"/>
+    </incident>
+
+</incidents>

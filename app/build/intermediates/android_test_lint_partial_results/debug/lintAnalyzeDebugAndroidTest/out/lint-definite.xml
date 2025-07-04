@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="incidents">
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.application than 8.7.3 is available: 8.11.0">
+        <fix-replace
+            description="Change to 8.11.0"
+            family="Update versions"
+            oldString="8.7.3"
+            replacement="8.11.0"
+            priority="0"/>
+        <location
+            file="$HOME/Desktop/ziya/gradle/libs.versions.toml"
+            line="2"
+            column="7"
+            startOffset="17"
+            endLine="2"
+            endColumn="14"
+            endOffset="24"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.7.0"
+            replacement="1.7.1"
+            priority="0"/>
+        <location
+            file="$HOME/Desktop/ziya/gradle/libs.versions.toml"
+            line="8"
+            column="13"
+            startOffset="137"
+            endLine="8"
+            endColumn="20"
+            endOffset="144"/>
+    </incident>
+
+</incidents>
