@@ -11,6 +11,7 @@
     <!-- Required permissions -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <permission
         android:name="com.example.ziya.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
