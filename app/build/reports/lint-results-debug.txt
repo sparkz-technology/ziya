@@ -1,4 +1,30 @@
-C:\Users\athik\Desktop\ziya\app\build.gradle.kts:13: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+C:\Users\athik\Desktop\ziya\app\src\main\java\com\example\ziya\OrbOverlayService.kt:50: Warning: Field requires API level 26 (current min is 24): android.view.WindowManager.LayoutParams#TYPE_APPLICATION_OVERLAY [InlinedApi]
+                                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "InlinedApi":
+   This check scans through all the Android API field references in the
+   application and flags certain constants, such as static final integers and
+   Strings, which were introduced in later versions. These will actually be
+   copied into the class files rather than being referenced, which means that
+   the value is available even when running on older devices. In some cases
+   that's fine, and in other cases it can result in a runtime crash or
+   incorrect behavior. It depends on the context, so consider the code
+   carefully and decide whether it's safe and can be suppressed or whether the
+   code needs to be guarded.
+
+   If you really want to use this API and don't need to support older devices
+   just set the minSdkVersion in your build.gradle or AndroidManifest.xml
+   files.
+
+   If your code is deliberately accessing newer APIs, and you have ensured
+   (e.g. with conditional execution) that this code will only ever be called
+   on a supported platform, then you can annotate your class or method with
+   the @TargetApi annotation specifying the local minimum SDK to apply, such
+   as @TargetApi(11), such that this check considers 11 rather than your
+   manifest file's minimum SDK as the required API level.
+
+C:\Users\athik\Desktop\ziya\app\build.gradle.kts:67: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
         targetSdk = 34
         ~~~~~~~~~~~~~~
 
@@ -67,7 +93,40 @@ C:\Users\athik\Desktop\ziya\app\src\main\java\com\example\ziya\MainActivity.kt:3
    where the version qualifier is less than or equal to the minSdkVersion,
    where the contents should be merged into the best folder.
 
-C:\Users\athik\Desktop\ziya\app\src\main\java\com\example\ziya\OrbView.kt:84: Warning: Custom view OrbView overrides onTouchEvent but not performClick [ClickableViewAccessibility]
+C:\Users\athik\Desktop\ziya\app\src\main\res\xml\backup_rules.xml:8: Warning: The resource R.xml.backup_rules appears to be unused [UnusedResources]
+<full-backup-content>
+^
+C:\Users\athik\Desktop\ziya\app\src\main\res\xml\data_extraction_rules.xml:6: Warning: The resource R.xml.data_extraction_rules appears to be unused [UnusedResources]
+<data-extraction-rules>
+^
+C:\Users\athik\Desktop\ziya\app\src\main\res\values\strings.xml:3: Warning: The resource R.string.orb_overlay_channel_name appears to be unused [UnusedResources]
+    <string name="orb_overlay_channel_name">Orb Overlay</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\athik\Desktop\ziya\app\src\main\res\values\strings.xml:4: Warning: The resource R.string.orb_overlay_channel_description appears to be unused [UnusedResources]
+    <string name="orb_overlay_channel_description">Controls the floating orb assistant</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\athik\Desktop\ziya\app\src\main\res\values\strings.xml:5: Warning: The resource R.string.orb_assistant_running appears to be unused [UnusedResources]
+    <string name="orb_assistant_running">Orb Assistant Running</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\athik\Desktop\ziya\app\src\main\res\values\strings.xml:6: Warning: The resource R.string.tap_to_open appears to be unused [UnusedResources]
+    <string name="tap_to_open">Tap to open app</string>
+            ~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+C:\Users\athik\Desktop\ziya\app\src\main\java\com\example\ziya\OrbView.kt:216: Warning: Custom view OrbView overrides onTouchEvent but not performClick [ClickableViewAccessibility]
     override fun onTouchEvent(event: MotionEvent): Boolean {
                  ~~~~~~~~~~~~
 
@@ -96,4 +155,4 @@ C:\Users\athik\Desktop\ziya\app\src\main\res\layout\activity_main.xml:11: Warnin
    There are quickfixes to automatically extract this hardcoded string into a
    resource lookup.
 
-0 errors, 10 warnings
+0 errors, 17 warnings

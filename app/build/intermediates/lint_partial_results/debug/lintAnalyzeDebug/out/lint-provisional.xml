@@ -2,28 +2,32 @@
 <incidents format="6" by="lint 8.7.3" type="conditional_incidents">
 
     <incident
-        id="ObsoleteSdkInt"
+        id="InlinedApi"
         severity="warning"
-        message="Unnecessary; SDK_INT is always >= 31">
-        <fix-replace
-            description="Delete tools:targetApi"
-            replacement=""
-            priority="0">
-            <range
-                file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-                startOffset="739"
-                endOffset="759"/>
-        </fix-replace>
+        message="">
+        <fix-data minSdk="ffffffffff800000" requiresApi="fffffffffe000000"/>
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-            line="18"
-            column="9"
-            startOffset="739"
-            endLine="18"
-            endColumn="29"
-            endOffset="759"/>
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/ziya/OrbOverlayService.kt"
+            line="50"
+            column="33"
+            startOffset="1612"
+            endLine="50"
+            endColumn="84"
+            endOffset="1663"/>
         <map>
-            <condition minGE="ffffffffc0000000"/>
+            <entry
+                name="message"
+                string="Field requires API level 26 (current min is %1$s): `android.view.WindowManager.LayoutParams#TYPE_APPLICATION_OVERLAY`"/>
+            <api-levels id="minSdk"
+                value="ffffffffff800000"/>
+            <entry
+                name="name"
+                string="TYPE_APPLICATION_OVERLAY"/>
+            <entry
+                name="owner"
+                string="android.view.WindowManager.LayoutParams"/>
+            <api-levels id="requiresApi"
+                value="fffffffffe000000"/>
         </map>
     </incident>
 

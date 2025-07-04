@@ -15,6 +15,10 @@ layout activity_main
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name
+string orb_assistant_running
+string orb_overlay_channel_description
+string orb_overlay_channel_name
+string tap_to_open
 style Theme.Ziya
 xml backup_rules
 xml data_extraction_rules

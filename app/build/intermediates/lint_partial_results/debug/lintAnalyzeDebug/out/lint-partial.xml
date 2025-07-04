@@ -22,9 +22,57 @@
             </map>
     </map>
     <map id="UnusedResources">
+        <location id="R.string.orb_assistant_running"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="5"
+            column="13"
+            startOffset="227"
+            endLine="5"
+            endColumn="41"
+            endOffset="255"/>
+        <location id="R.string.orb_overlay_channel_description"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="4"
+            column="13"
+            startOffset="131"
+            endLine="4"
+            endColumn="51"
+            endOffset="169"/>
+        <location id="R.string.orb_overlay_channel_name"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="3"
+            column="13"
+            startOffset="66"
+            endLine="3"
+            endColumn="44"
+            endOffset="97"/>
+        <location id="R.string.tap_to_open"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="6"
+            column="13"
+            startOffset="299"
+            endLine="6"
+            endColumn="31"
+            endOffset="317"/>
+        <location id="R.xml.backup_rules"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/xml/backup_rules.xml"
+            line="8"
+            column="1"
+            startOffset="326"
+            endLine="13"
+            endColumn="23"
+            endOffset="478"/>
+        <location id="R.xml.data_extraction_rules"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/xml/data_extraction_rules.xml"
+            line="6"
+            column="1"
+            startOffset="221"
+            endLine="19"
+            endColumn="25"
+            endOffset="551"/>
         <entry
             name="model"
-            string="attr[colorPrimaryVariant(R)],color[purple_200(U),purple_500(U),purple_700(U),teal_200(U),teal_700(U),black(U),white(U)],drawable[ic_launcher_background(U),ic_launcher_foreground(U),ic_launcher_foreground_1(R),ic_orb(U)],id[startOverlayBtn(U)],layout[activity_main(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U)],style[Theme_Ziya(U),Theme_MaterialComponents_DayNight_DarkActionBar(R)],xml[data_extraction_rules(U),backup_rules(U)];9^a,e^8^9,f^8^9,11^12^2^3^7^4^5^6^0^1;;;"/>
+            string="attr[colorPrimaryVariant(R)],color[purple_200(U),purple_500(U),purple_700(U),teal_200(U),teal_700(U),black(U),white(U)],drawable[ic_launcher_background(U),ic_launcher_foreground(U),ic_launcher_foreground_1(R),ic_orb(U)],id[startOverlayBtn(U)],layout[activity_main(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U),orb_overlay_channel_name(D),orb_overlay_channel_description(D),orb_assistant_running(D),tap_to_open(D)],style[Theme_Ziya(U),Theme_MaterialComponents_DayNight_DarkActionBar(R)],xml[backup_rules(D),data_extraction_rules(D)];9^a,e^8^9,f^8^9,15^16^2^3^7^4^5^6^0^1;;;"/>
     </map>
 
 </incidents>

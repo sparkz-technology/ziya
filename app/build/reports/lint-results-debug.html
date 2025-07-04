@@ -177,19 +177,21 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 10 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 17 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Jul 04 12:22:46 IST 2025 by AGP (8.7.3)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Jul 04 18:09:59 IST 2025 by AGP (8.7.3)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Issue Types</span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="#overview"><i class="material-icons">dashboard</i>Overview</a>
+      <a class="mdl-navigation__link" href="#InlinedApi"><i class="material-icons warning-icon">warning</i>Using inlined constants on older versions (1)</a>
       <a class="mdl-navigation__link" href="#OldTargetApi"><i class="material-icons warning-icon">warning</i>Target SDK attribute is not targeting latest version (1)</a>
       <a class="mdl-navigation__link" href="#AndroidGradlePluginVersion"><i class="material-icons warning-icon">warning</i>Obsolete Android Gradle Plugin Version (3)</a>
       <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (3)</a>
       <a class="mdl-navigation__link" href="#ObsoleteSdkInt"><i class="material-icons warning-icon">warning</i>Obsolete SDK_INT Version Check (1)</a>
+      <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (6)</a>
       <a class="mdl-navigation__link" href="#ClickableViewAccessibility"><i class="material-icons warning-icon">warning</i>Accessibility in Custom Views (1)</a>
       <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (1)</a>
     </nav>
@@ -208,6 +210,9 @@ document.getElementById(id).style.display = 'none';
 </td></tr>
 <tr>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#InlinedApi">InlinedApi</a>: Using inlined constants on older versions</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#OldTargetApi">OldTargetApi</a>: Target SDK attribute is not targeting latest version</td></tr>
 <tr>
 <td class="countColumn">3</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
@@ -220,6 +225,9 @@ document.getElementById(id).style.display = 'none';
 <tr>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#ObsoleteSdkInt">ObsoleteSdkInt</a>: Obsolete SDK_INT Version Check</td></tr>
+<tr>
+<td class="countColumn">6</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#UnusedResources">UnusedResources</a>: Unused resources</td></tr>
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Accessibility">Accessibility</a>
 </td></tr>
 <tr>
@@ -242,7 +250,57 @@ Dismiss</button>            </div>
             </div>
           </section>
 <a name="Correctness"></a>
-<a name="OldTargetApi"></a>
+<a name="InlinedApi"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="InlinedApiCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Using inlined constants on older versions</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/example/ziya/OrbOverlayService.kt">../../src/main/java/com/example/ziya/OrbOverlayService.kt</a>:50</span>: <span class="message">Field requires API level 26 (current min is 24): <code>android.view.WindowManager.LayoutParams#TYPE_APPLICATION_OVERLAY</code></span><br /><pre class="errorlines">
+<span class="lineno">  47 </span>     WindowManager.LayoutParams(
+<span class="lineno">  48 </span>                     size,
+<span class="lineno">  49 </span>                     size,
+<span class="caretline"><span class="lineno">  50 </span>                     <span class="warning">WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  51 </span>                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+<span class="lineno">  52 </span>                             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+<span class="lineno">  53 </span>                             WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+</pre>
+
+</div>
+<div class="metadata"><div class="explanation" id="explanationInlinedApi" style="display: none;">
+This check scans through all the Android API field references in the application and flags certain constants, such as static final integers and Strings, which were introduced in later versions. These will actually be copied into the class files rather than being referenced, which means that the value is available even when running on older devices. In some cases that's fine, and in other cases it can result in a runtime crash or incorrect behavior. It depends on the context, so consider the code carefully and decide whether it's safe and can be suppressed or whether the code needs to be guarded.<br/>
+<br/>
+If you really want to use this API and don't need to support older devices just set the <code>minSdkVersion</code> in your <code>build.gradle</code> or <code>AndroidManifest.xml</code> files.<br/>
+<br/>
+If your code is <b>deliberately</b> accessing newer APIs, and you have ensured (e.g. with conditional execution) that this code will only ever be called on a supported platform, then you can annotate your class or method with the <code>@TargetApi</code> annotation specifying the local minimum SDK to apply, such as <code>@TargetApi(11)</code>, such that this check considers 11 rather than your manifest file's minimum SDK as the required API level.<br/>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>
+To suppress this error, use the issue id "InlinedApi" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">InlinedApi</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Correctness</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 6/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationInlinedApiLink" onclick="reveal('explanationInlinedApi');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="InlinedApiCardLink" onclick="hideid('InlinedApiCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="OldTargetApi"></a>
 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="OldTargetApiCard" style="display: block;">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
   <div class="mdl-card__title">
@@ -251,13 +309,13 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../build.gradle.kts">../../build.gradle.kts</a>:13</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the <code>android.os.Build.VERSION_CODES</code> javadoc for details.</span><br /><pre class="errorlines">
-<span class="lineno"> 10 </span>    defaultConfig {
-<span class="lineno"> 11 </span>        applicationId = "com.example.ziya"
-<span class="lineno"> 12 </span>        minSdk = 24
-<span class="caretline"><span class="lineno"> 13 </span>        <span class="warning">targetSdk = 34</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 14 </span>        versionCode = 1
-<span class="lineno"> 15 </span>        versionName = "1.0"
+<span class="location"><a href="../../build.gradle.kts">../../build.gradle.kts</a>:67</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the <code>android.os.Build.VERSION_CODES</code> javadoc for details.</span><br /><pre class="errorlines">
+<span class="lineno">  64 </span>    defaultConfig {
+<span class="lineno">  65 </span>        applicationId = "com.example.ziya"
+<span class="lineno">  66 </span>        minSdk = 24
+<span class="caretline"><span class="lineno">  67 </span>        <span class="warning">targetSdk = 34</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  68 </span>        versionCode = 1
+<span class="lineno">  69 </span>        versionName = "1.0"
 </pre>
 
 </div>
@@ -468,6 +526,100 @@ To suppress this error, use the issue id "ObsoleteSdkInt" as explained in the <a
 Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="ObsoleteSdkIntCardLink" onclick="hideid('ObsoleteSdkIntCard');">
 Dismiss</button>            </div>
             </div>
+          </section><a name="UnusedResources"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="UnusedResourcesCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Unused resources</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/res/xml/backup_rules.xml">../../src/main/res/xml/backup_rules.xml</a>:8</span>: <span class="message">The resource <code>R.xml.backup_rules</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno">  5 </span><span class="comment">   Note: This file is ignored for devices older that API 31
+</span><span class="lineno">  6 </span><span class="comment">   See https://developer.android.com/about/versions/12/backup-restore
+</span><span class="lineno">  7 </span><span class="comment">--></span>
+<span class="caretline"><span class="lineno">  8 </span><span class="warning"><span class="tag">&lt;full-backup-content></span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  9 </span>    <span class="comment">&lt;!--
+</span><span class="lineno"> 10 </span><span class="comment">   &lt;include domain="sharedpref" path="."/>
+</span><span class="lineno"> 11 </span><span class="comment">   &lt;exclude domain="sharedpref" path="device.xml"/>
+</span></pre>
+
+<span class="location"><a href="../../src/main/res/xml/data_extraction_rules.xml">../../src/main/res/xml/data_extraction_rules.xml</a>:6</span>: <span class="message">The resource <code>R.xml.data_extraction_rules</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno">  3 </span><span class="comment">   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
+</span><span class="lineno">  4 </span><span class="comment">   for details.
+</span><span class="lineno">  5 </span><span class="comment">--></span>
+<span class="caretline"><span class="lineno">  6 </span><span class="warning"><span class="tag">&lt;data-extraction-rules></span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  7 </span>    <span class="tag">&lt;cloud-backup></span>
+<span class="lineno">  8 </span>        <span class="comment">&lt;!-- TODO: Use &lt;include> and &lt;exclude> to control what is backed up.
+</span><span class="lineno">  9 </span><span class="comment">        &lt;include .../>
+</span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:3</span>: <span class="message">The resource <code>R.string.orb_overlay_channel_name</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 1 </span><span class="tag">&lt;resources></span>
+<span class="lineno"> 2 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"app_name"</span>>ziya<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 3 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"orb_overlay_channel_name"</span></span>>Orb Overlay<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 4 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_description"</span>>Controls the floating orb assistant<span class="tag">&lt;/string></span>
+<span class="lineno"> 5 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_assistant_running"</span>>Orb Assistant Running<span class="tag">&lt;/string></span>
+<span class="lineno"> 6 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"tap_to_open"</span>>Tap to open app<span class="tag">&lt;/string></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:4</span>: <span class="message">The resource <code>R.string.orb_overlay_channel_description</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 1 </span><span class="tag">&lt;resources></span>
+<span class="lineno"> 2 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"app_name"</span>>ziya<span class="tag">&lt;/string></span>
+<span class="lineno"> 3 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_name"</span>>Orb Overlay<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 4 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"orb_overlay_channel_description"</span></span>>Controls the floating orb assistant<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 5 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_assistant_running"</span>>Orb Assistant Running<span class="tag">&lt;/string></span>
+<span class="lineno"> 6 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"tap_to_open"</span>>Tap to open app<span class="tag">&lt;/string></span>
+<span class="lineno"> 7 </span><span class="tag">&lt;/resources></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:5</span>: <span class="message">The resource <code>R.string.orb_assistant_running</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 2 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"app_name"</span>>ziya<span class="tag">&lt;/string></span>
+<span class="lineno"> 3 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_name"</span>>Orb Overlay<span class="tag">&lt;/string></span>
+<span class="lineno"> 4 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_description"</span>>Controls the floating orb assistant<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 5 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"orb_assistant_running"</span></span>>Orb Assistant Running<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 6 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"tap_to_open"</span>>Tap to open app<span class="tag">&lt;/string></span>
+<span class="lineno"> 7 </span><span class="tag">&lt;/resources></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:6</span>: <span class="message">The resource <code>R.string.tap_to_open</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 3 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_name"</span>>Orb Overlay<span class="tag">&lt;/string></span>
+<span class="lineno"> 4 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_overlay_channel_description"</span>>Controls the floating orb assistant<span class="tag">&lt;/string></span>
+<span class="lineno"> 5 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"orb_assistant_running"</span>>Orb Assistant Running<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 6 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"tap_to_open"</span></span>>Tap to open app<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 7 </span><span class="tag">&lt;/resources></span></pre>
+
+</div>
+<div class="metadata"><div class="explanation" id="explanationUnusedResources" style="display: none;">
+Unused resources make applications larger and slow down builds.<br/>
+<br/>
+<br/>
+The unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.<br/>
+<br/>
+You can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests =true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests =true.<br/>
+,<br/>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>
+To suppress this error, use the issue id "UnusedResources" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">UnusedResources</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Performance</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 3/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationUnusedResourcesLink" onclick="reveal('explanationUnusedResources');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="UnusedResourcesCardLink" onclick="hideid('UnusedResourcesCard');">
+Dismiss</button>            </div>
+            </div>
           </section>
 <a name="Accessibility"></a>
 <a name="ClickableViewAccessibility"></a>
@@ -479,14 +631,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/java/com/example/ziya/OrbView.kt">../../src/main/java/com/example/ziya/OrbView.kt</a>:84</span>: <span class="message">Custom view <code>OrbView</code> overrides <code>onTouchEvent</code> but not <code>performClick</code></span><br /><pre class="errorlines">
-<span class="lineno">  81 </span>        invalidate()
-<span class="lineno">  82 </span>    }
-<span class="lineno">  83 </span>
-<span class="caretline"><span class="lineno">  84 </span>    override <span class="keyword">fun</span> <span class="warning">onTouchEvent</span>(event: MotionEvent): Boolean {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  85 </span>        <span class="keyword">val</span> windowManagerParams = layoutParams <span class="keyword">as</span>? WindowManager.LayoutParams
-<span class="lineno">  86 </span>        <span class="keyword">when</span> (event.actionMasked) {
-<span class="lineno">  87 </span>            MotionEvent.ACTION_DOWN -> {
+<span class="location"><a href="../../src/main/java/com/example/ziya/OrbView.kt">../../src/main/java/com/example/ziya/OrbView.kt</a>:216</span>: <span class="message">Custom view <code>OrbView</code> overrides <code>onTouchEvent</code> but not <code>performClick</code></span><br /><pre class="errorlines">
+<span class="lineno"> 213 </span>        canvas.drawPath(edgePath, gradientPaint)
+<span class="lineno"> 214 </span>    }
+<span class="lineno"> 215 </span>
+<span class="caretline"><span class="lineno"> 216 </span>    override <span class="keyword">fun</span> <span class="warning">onTouchEvent</span>(event: MotionEvent): Boolean {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 217 </span>        <span class="keyword">val</span> currentTime = System.currentTimeMillis()
+<span class="lineno"> 218 </span>        <span class="keyword">val</span> windowManagerParams = layoutParams <span class="keyword">as</span>? WindowManager.LayoutParams
+<span class="lineno"> 219 </span>        
 </pre>
 
 </div>

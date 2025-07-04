@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ziya</string>
+    <string name="orb_overlay_channel_name">Orb Overlay</string>
+    <string name="orb_overlay_channel_description">Controls the floating orb assistant</string>
+    <string name="orb_assistant_running">Orb Assistant Running</string>
+    <string name="tap_to_open">Tap to open app</string>
 </resources>

@@ -12,12 +12,12 @@
             priority="0"/>
         <location
             file="${:app*projectDir}/build.gradle.kts"
-            line="13"
+            line="67"
             column="9"
-            startOffset="253"
-            endLine="13"
+            startOffset="1759"
+            endLine="67"
             endColumn="23"
-            endOffset="267"/>
+            endOffset="1773"/>
     </incident>
 
     <incident
@@ -81,12 +81,12 @@
         message="Custom view `OrbView` overrides `onTouchEvent` but not `performClick`">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/ziya/OrbView.kt"
-            line="84"
+            line="216"
             column="18"
-            startOffset="2673"
-            endLine="84"
+            startOffset="6539"
+            endLine="216"
             endColumn="30"
-            endOffset="2685"/>
+            endOffset="6551"/>
     </incident>
 
     <incident
