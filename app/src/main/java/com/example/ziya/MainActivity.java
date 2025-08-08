@@ -1,65 +1,10 @@
-// package com.example.ziya;
-
-// import android.Manifest;
-// import android.content.Intent;
-// import android.content.pm.PackageManager;
-// import android.os.Build;
-// import android.os.Bundle;
-// import androidx.activity.result.ActivityResultLauncher;
-// import androidx.activity.result.contract.ActivityResultContracts;
-// import androidx.appcompat.app.AppCompatActivity;
-// import androidx.core.content.ContextCompat;
-
-// public class MainActivity extends AppCompatActivity {
-
-//     // Declare the launcher at the top of your Activity/Fragment:
-//     private final ActivityResultLauncher<String> requestPermissionLauncher =
-//             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-//                 if (isGranted) {
-//                     // Permission is granted. You can now start the service.
-//                     startNotificationService();
-//                 } else {
-//                     // Explain to the user that the feature is unavailable because the
-//                     // feature requires a permission that the user has denied.
-//                     // You can show a dialog or a snackbar here.
-//                 }
-//             });
-
-//     @Override
-//     protected void onCreate(Bundle savedInstanceState) {
-//         super.onCreate(savedInstanceState);
-//         setContentView(R.layout.activity_main);
-//         askNotificationPermission();
-//     }
-
-//     private void askNotificationPermission() {
-//         // This is only necessary for API level 33 and higher.
-//         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-//                     PackageManager.PERMISSION_GRANTED) {
-//                 // Permission is already granted, start the service.
-//                 startNotificationService();
-//             } else {
-//                 // Directly ask for the permission.
-//                 // The registered ActivityResultCallback gets the result of this request.
-//                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-//             }
-//         } else {
-//             // For older versions, permission is not required, so just start the service.
-//             startNotificationService();
-//         }
-//     }
-
-//     private void startNotificationService() {
-//         // Start the foreground service
-//         Intent serviceIntent = new Intent(this, NotificationService.class);
-//         startForegroundService(serviceIntent);
-//     }
-// }
 package com.example.ziya;
 
 import android.content.res.Configuration;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,14 +97,23 @@ public class MainActivity extends AppCompatActivity {
         };
 
         filterContainer.removeAllViews();
+        
+        int sizeInDp = 48;
+        int marginInDp = 4;
+        int sizeInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeInDp, getResources().getDisplayMetrics());
+        int marginInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginInDp, getResources().getDisplayMetrics());
 
         for (int i = 0; i < filters.length; i++) {
             ImageButton button = new ImageButton(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(sizeInPx, sizeInPx);
+            params.setMargins(marginInPx, 0, marginInPx, 0);
             button.setLayoutParams(params);
+            
             button.setImageResource(filterIcons[i]);
             button.setBackgroundResource(R.drawable.filter_button_background);
-            button.setPadding(24, 24, 24, 24);
+            button.setPadding(12, 12, 12, 12);
+            button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
 
             final String filter = filters[i];
             button.setOnClickListener(v -> {
@@ -174,12 +128,67 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFilterButtons() {
         LinearLayout filterContainer = findViewById(R.id.filter_container);
+        String[] filters = {"all", "success", "error", "warning", "info"};
+
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
-            View child = filterContainer.getChildAt(i);
-            String[] filters = {"all", "success", "error", "warning", "info"};
-            child.setSelected(filters[i].equals(currentFilter));
+            ImageButton button = (ImageButton) filterContainer.getChildAt(i);
+            String filterType = filters[i];
+            boolean isActive = filterType.equals(currentFilter);
+
+            int backgroundColor;
+            int iconColor;
+
+            boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+
+            if (isActive) {
+                iconColor = ContextCompat.getColor(this, R.color.white);
+                switch (filterType) {
+                    case "success":
+                        backgroundColor = ContextCompat.getColor(this, R.color.notif_success);
+                        break;
+                    case "error":
+                        backgroundColor = ContextCompat.getColor(this, R.color.notif_error);
+                        break;
+                    case "warning":
+                        backgroundColor = ContextCompat.getColor(this, R.color.notif_warning);
+                        break;
+                    case "info":
+                        backgroundColor = ContextCompat.getColor(this, R.color.notif_info);
+                        break;
+                    default: // "all"
+                        backgroundColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+                        break;
+                }
+            } else {
+                // Inactive state colors
+                switch (filterType) {
+                    case "success":
+                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_success_dark : R.color.white);
+                        iconColor = ContextCompat.getColor(this, R.color.notif_success);
+                        break;
+                    case "error":
+                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_error_dark : R.color.white);
+                        iconColor = ContextCompat.getColor(this, R.color.notif_error);
+                        break;
+                    case "warning":
+                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_warning_dark : R.color.white);
+                        iconColor = ContextCompat.getColor(this, R.color.notif_warning);
+                        break;
+                    case "info":
+                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_info_dark : R.color.white);
+                        iconColor = ContextCompat.getColor(this, R.color.notif_info);
+                        break;
+                    default: // "all"
+                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight);
+                        iconColor = ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight);
+                        break;
+                }
+            }
+            button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
+            button.setImageTintList(ColorStateList.valueOf(iconColor));
         }
     }
+
 
     private void filterAndDisplayNotifications() {
         if (currentFilter.equals("all")) {
@@ -267,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
         public static class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView title, message, time;
             private final ImageView icon;
-            private final View unreadDot;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -275,14 +283,15 @@ public class MainActivity extends AppCompatActivity {
                 message = itemView.findViewById(R.id.notification_message);
                 time = itemView.findViewById(R.id.notification_time);
                 icon = itemView.findViewById(R.id.notification_icon);
-                unreadDot = itemView.findViewById(R.id.unread_dot);
             }
 
             public void bind(final Notification notification, final OnItemClickListener listener) {
                 title.setText(notification.getTitle());
                 message.setText(notification.getMessage());
                 time.setText(notification.getTime());
-                unreadDot.setVisibility(notification.isRead() ? View.INVISIBLE : View.VISIBLE);
+                
+                title.setTypeface(null, notification.isRead() ? Typeface.NORMAL : Typeface.BOLD);
+
                 int iconRes = getIconResource(notification.getType());
                 int colorRes = getIconColor(notification.getType());
                 icon.setImageResource(iconRes);

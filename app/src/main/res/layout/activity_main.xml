@@ -69,8 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:weightSum="5">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
             <!-- Filter buttons will be added here programmatically -->
         </LinearLayout>
 
