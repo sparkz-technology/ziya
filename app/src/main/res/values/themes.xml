@@ -1,20 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Ziya" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorOnPrimary">@color/colorOnPrimaryLight</item>
-        <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/colorPrimaryLight</item>
         <item name="colorOnSecondary">@color/colorOnPrimaryLight</item>
-        <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:windowLightStatusBar">true</item>
-        <!-- Customize your theme here. -->
         <item name="colorSurface">@color/colorSurfaceLight</item>
         <item name="colorOnSurface">@color/colorOnSurfaceLight</item>
         <item name="android:colorBackground">@color/colorBackgroundLight</item>
     </style>
 
-    <style name="Theme.Ziya" parent="Base.Theme.Ziya" />
+    <style name="Theme.Ziya" parent="Base.Theme.Ziya">
+        <item name="actionModeStyle">@style/Widget.App.ActionMode</item>
+    </style>
+
+    <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="background">?attr/colorPrimary</item>
+        <item name="titleTextStyle">@style/Widget.App.ActionMode.Title</item>
+    </style>
+
+    <style name="Widget.App.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
 </resources>

@@ -25,24 +25,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:orientation="horizontal">
+<ImageButton
+    android:id="@+id/theme_button"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:background="@drawable/circular_ripple"
+    android:contentDescription="@string/toggle_theme"
+    android:src="@drawable/ic_moon"
+    app:tint="?attr/colorOnSurface" />
 
-                <ImageButton
-                    android:id="@+id/theme_button"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/toggle_theme"
-                    android:src="@drawable/ic_moon"
-                    app:tint="?attr/colorOnSurface" />
-
-                <ImageButton
-                    android:id="@+id/settings_button"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/settings"
-                    android:src="@drawable/ic_settings"
-                    app:tint="?attr/colorOnSurface" />
+<ImageButton
+    android:id="@+id/settings_button"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:background="@drawable/circular_ripple"
+    android:contentDescription="@string/settings"
+    android:src="@drawable/ic_settings"
+    app:tint="?attr/colorOnSurface" />
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
