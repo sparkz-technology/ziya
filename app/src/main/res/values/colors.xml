@@ -5,6 +5,28 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Light Theme -->
+    <color name="colorPrimaryLight">#6200EE</color>
+    <color name="colorOnPrimaryLight">#FFFFFF</color>
+    <color name="colorSurfaceLight">#FFFFFF</color>
+    <color name="colorOnSurfaceLight">#000000</color>
+    <color name="colorBackgroundLight">#F7F7F7</color>
+
+    <!-- Dark Theme -->
+    <color name="colorPrimaryDark">#BB86FC</color>
+    <color name="colorOnPrimaryDark">#000000</color>
+    <color name="colorSurfaceDark">#121212</color>
+    <color name="colorOnSurfaceDark">#FFFFFF</color>
+    <color name="colorBackgroundDark">#1F1B24</color>
+
+    <!-- Notification Colors -->
+    <color name="notif_success">#4CAF50</color>
+    <color name="notif_error">#F44336</color>
+    <color name="notif_warning">#FFC107</color>
+    <color name="notif_info">#2196F3</color>
+    <color name="notif_unread_dot">#6200EE</color>
 </resources>
