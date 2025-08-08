@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">ziya</string>
+    <string name="app_name">Ziya Notification Service</string>
+    <string name="websocket_url_hint">WebSocket URL (ws:// or wss://)</string>
+    <string name="save_url">Save URL</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="start_service">Start Service</string>
+    <string name="stop_service">Stop Service</string>
+    <string name="clear_log">Clear Log</string>
+    <string name="test_notification">Test Notification</string>
+    <string name="service_status">Service Status:</string>
+    <string name="websocket_status">WebSocket Status:</string>
+    <string name="websocket_configuration">WebSocket Configuration</string>
+    <string name="service_status_title">Service Status</string>
+    <string name="debug_information">Debug Information</string>
+    <string name="notification_permission_required">Notification permission is required for the app to function properly</string>
+    <string name="url_saved_successfully">WebSocket URL saved successfully</string>
+    <string name="enter_valid_url">Please enter a valid WebSocket URL</string>
+    <string name="url_must_start_with_ws">URL must start with ws:// or wss://</string>
+    <string name="enter_url_first">Please enter a WebSocket URL first</string>
 </resources>
