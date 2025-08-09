@@ -21,27 +21,39 @@
             app:title="">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:orientation="horizontal">
-<ImageButton
-    android:id="@+id/theme_button"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:background="@drawable/circular_ripple"
-    android:contentDescription="@string/toggle_theme"
-    android:src="@drawable/ic_moon"
-    app:tint="?attr/colorOnSurface" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-<ImageButton
-    android:id="@+id/settings_button"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:background="@drawable/circular_ripple"
-    android:contentDescription="@string/settings"
-    android:src="@drawable/ic_settings"
-    app:tint="?attr/colorOnSurface" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/app_name"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/theme_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/circular_ripple"
+                    android:contentDescription="@string/toggle_theme"
+                    android:src="@drawable/ic_moon"
+                    app:tint="?attr/colorOnSurface" />
+
+                <ImageButton
+                    android:id="@+id/settings_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/circular_ripple"
+                    android:contentDescription="@string/settings"
+                    android:src="@drawable/ic_settings"
+                    app:tint="?attr/colorOnSurface" />
+
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
@@ -59,17 +71,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/notifications"
             android:textAppearance="?attr/textAppearanceHeadline5"
             android:textColor="?attr/colorOnSurface" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Stay updated with your latest notifications"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <LinearLayout
             android:id="@+id/filter_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
             android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@drawable/filter_button_background"
+            android:padding="4dp">
             <!-- Filter buttons will be added here programmatically -->
         </LinearLayout>
 
@@ -77,8 +101,9 @@
             android:id="@+id/notification_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
             tools:listitem="@layout/list_item_notification" />
 
     </LinearLayout>
