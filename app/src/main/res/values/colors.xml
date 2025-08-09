@@ -1,39 +1,28 @@
+<!-- app/src/main/res/values/colors.xml -->
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark theme colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_gray">#FFD3D3D3</color>
-    <color name="dark_gray">#FFA9A9A9</color>
-    <color name="red">#FFFF0000</color>
-    <color name="green">#FF00FF00</color>
-    <color name="blue">#FF0000FF</color>
-    <color name="yellow">#FFFFFF00</color>
-    <color name="orange">#FFFFA500</color>
-    <color name="purple">#FF800080</color>
-    <color name="transparent">#00000000</color>
+    <color name="notif_success">#4CAF50</color>
+    <color name="notif_info">#2196F3</color>
+    <color name="notif_warning">#FFC107</color>
+    <color name="notif_error">#F44336</color>
+    <color name="dark_gray">#A9A9A9</color>
+    <color name="light_gray">#D3D3D3</color>
+    <color name="unread_dot_color">#FF0000</color>
+    <color name="selection_overlay_color">#40000000</color>
 
-    <!-- Material Component Colors for Dark Theme -->
-    <color name="colorPrimary">#BB86FC</color>
+    <!-- Theme Colors -->
+    <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryVariant">#3700B3</color>
-    <color name="colorOnPrimary">@color/black</color>
+    <color name="colorOnPrimary">@color/white</color>
     <color name="colorSecondary">#03DAC6</color>
-    <color name="colorSecondaryVariant">#03DAC6</color>
+    <color name="colorSecondaryVariant">#018786</color>
     <color name="colorOnSecondary">@color/black</color>
-    <color name="colorError">#CF6679</color>
-    <color name="colorOnError">@color/black</color>
-    <color name="colorSurface">#1E1E1E</color>
-    <color name="colorOnSurface">@color/white</color>
-    <color name="colorBackground">#121212</color>
-    <color name="colorOnBackground">@color/white</color>
-
-    <!-- Custom App Colors for Dark Theme -->
-    <color name="unread_dot_color">#FF4081</color>
-    <color name="selection_overlay">#40FFFFFF</color>
-    <color name="filter_button_selected">#33FFFFFF</color>
-    <color name="filter_button_unselected">@android:color/transparent</color>
-    <color name="bottom_sheet_background">@color/colorSurface</color>
-    <color name="bottom_sheet_handle">#555555</color>
-    <color name="contextual_action_bar_background">?attr/colorPrimary</color>
-    <color name="status_bar_color">?attr/colorPrimaryVariant</color>
+    <color name="colorBackground">@color/white</color>
+    <color name="colorSurface">@color/white</color>
+    <color name="colorOnBackground">@color/black</color>
+    <color name="colorOnSurface">@color/black</color>
+    <color name="colorError">#B00020</color>
+    <color name="colorOnError">@color/white</color>
 </resources>
