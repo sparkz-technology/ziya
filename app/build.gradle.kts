@@ -17,7 +17,6 @@ android {
 
     signingConfigs {
         create("release") {
-            // Note: Removed the redundant "as String" casts to fix the warnings
             keyAlias = keystoreProperties.getProperty("keyAlias")
             keyPassword = keystoreProperties.getProperty("keyPassword")
             storeFile = file(keystoreProperties.getProperty("storeFile"))
@@ -62,6 +61,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
