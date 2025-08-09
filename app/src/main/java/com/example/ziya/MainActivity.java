@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isSelectionMode = false;
     private Set<Notification> selectedNotifications = new HashSet<>();
     private ActionMode actionMode;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
+    private View emptyStateLayout;
 
 
     @Override
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         loadNotifications();
         setupRecyclerView();
+        setupSwipeRefresh();
+        setupEmptyState();
         setupFilterButtons();
         filterAndDisplayNotifications(); // Initial filter
     }
@@ -119,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
         allNotifications.add(new Notification("info", "System Maintenance", "Scheduled maintenance upcoming.", "3d ago", true));
         allNotifications.add(new Notification("warning", "Low Disk Space", "Your storage is almost full.", "4d ago", false));
         allNotifications.add(new Notification("success", "New Login", "A new device has logged into your account.", "5d ago", true));
+        
+        // For testing empty state, uncomment the line below:
+        // allNotifications.clear();
     }
 
     private void setupRecyclerView() {
@@ -135,6 +142,117 @@ public class MainActivity extends AppCompatActivity {
         
         notificationAdapter = new NotificationAdapter(new ArrayList<>(), this::onItemClick, this::onItemLongClick, selectedNotifications);
         notificationRecyclerView.setAdapter(notificationAdapter);
+        
+        // Add swipe-to-dismiss functionality
+        setupSwipeToDelete();
+    }
+
+    private void setupSwipeToDelete() {
+        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback simpleCallback = 
+            new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0, androidx.recyclerview.widget.ItemTouchHelper.LEFT) {
+            
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position >= 0 && position < notificationAdapter.getItemCount()) {
+                    Notification notification = notificationAdapter.getNotifications().get(position);
+                    
+                    // Remove from both the filtered list and the main list
+                    allNotifications.remove(notification);
+                    selectedNotifications.remove(notification);
+                    
+                    // Update the display
+                    filterAndDisplayNotifications();
+                    
+                    // Show a snackbar with undo option
+                    androidx.coordinatorlayout.widget.CoordinatorLayout coordinatorLayout = findViewById(android.R.id.content);
+                    com.google.android.material.snackbar.Snackbar.make(coordinatorLayout, "Notification deleted", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", v -> {
+                            // Restore the notification
+                            allNotifications.add(position, notification);
+                            filterAndDisplayNotifications();
+                        })
+                        .show();
+                }
+            }
+            
+            @Override
+            public void onChildDraw(@NonNull android.graphics.Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    
+                    // Add visual feedback during swipe
+                    float alpha = 1.0f - Math.abs(dX) / itemView.getWidth();
+                    itemView.setAlpha(alpha);
+                    
+                    // Add scale effect
+                    float scale = 1.0f - Math.abs(dX) / itemView.getWidth() * 0.1f;
+                    itemView.setScaleY(scale);
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+            
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                // Reset visual state
+                viewHolder.itemView.setAlpha(1.0f);
+                viewHolder.itemView.setScaleY(1.0f);
+            }
+        };
+        
+        androidx.recyclerview.widget.ItemTouchHelper itemTouchHelper = new androidx.recyclerview.widget.ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(notificationRecyclerView);
+    }
+
+    private void setupSwipeRefresh() {
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(
+            R.color.notif_success,
+            R.color.notif_info,
+            R.color.notif_warning,
+            R.color.notif_error
+        );
+        
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // Simulate refreshing notifications
+            refreshNotifications();
+        });
+    }
+
+    private void refreshNotifications() {
+        // Simulate network delay
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            // Add some new notifications to simulate refresh
+            List<String[]> newNotifications = java.util.Arrays.asList(
+                new String[]{"success", "Sync Complete", "Your data has been synchronized.", "Just now"},
+                new String[]{"info", "New Update Available", "Version 2.0 is now available for download.", "1m ago"}
+            );
+            
+            for (String[] notif : newNotifications) {
+                // Add at the beginning to show as newest
+                allNotifications.add(0, new Notification(notif[0], notif[1], notif[2], notif[3], false));
+            }
+            
+            filterAndDisplayNotifications();
+            swipeRefreshLayout.setRefreshing(false);
+            
+            Toast.makeText(this, "Notifications updated", Toast.LENGTH_SHORT).show();
+        }, 1500); // 1.5 second delay to simulate network call
+    }
+
+    private void setupEmptyState() {
+        emptyStateLayout = findViewById(R.id.empty_state_layout);
+        findViewById(R.id.refresh_button).setOnClickListener(v -> {
+            animateButtonPress(v);
+            swipeRefreshLayout.setRefreshing(true);
+            refreshNotifications();
+        });
     }
 
     private void onItemClick(Notification notification) {
@@ -307,6 +425,16 @@ public class MainActivity extends AppCompatActivity {
                         backgroundColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
                         break;
                 }
+                
+                // Add activation animation
+                ObjectAnimator pulse = ObjectAnimator.ofFloat(button, "scaleX", 1f, 1.1f, 1f);
+                ObjectAnimator pulseY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 1.1f, 1f);
+                pulse.setDuration(200);
+                pulseY.setDuration(200);
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(pulse, pulseY);
+                animatorSet.start();
+                
             } else {
                 // Inactive state colors
                 switch (filterType) {
@@ -332,7 +460,21 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
-            button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
+            
+            // Animate color changes smoothly
+            try {
+                android.animation.ValueAnimator backgroundAnimator = android.animation.ValueAnimator.ofArgb(
+                    ContextCompat.getColor(this, android.R.color.transparent), backgroundColor);
+                backgroundAnimator.setDuration(250);
+                backgroundAnimator.addUpdateListener(animation -> {
+                    button.setBackgroundTintList(ColorStateList.valueOf((Integer) animation.getAnimatedValue()));
+                });
+                backgroundAnimator.start();
+            } catch (Exception e) {
+                // Fallback to immediate color change
+                button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
+            }
+            
             button.setImageTintList(ColorStateList.valueOf(iconColor));
         }
     }
@@ -348,6 +490,16 @@ public class MainActivity extends AppCompatActivity {
                     .collect(Collectors.toList());
         }
         notificationAdapter.updateNotifications(filteredList);
+        
+        // Handle empty state
+        if (filteredList.isEmpty()) {
+            notificationRecyclerView.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.VISIBLE);
+            animateViewIn(emptyStateLayout);
+        } else {
+            emptyStateLayout.setVisibility(View.GONE);
+            notificationRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showSettingsBottomSheet() {
