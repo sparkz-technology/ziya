@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ziya</string>
+    <string name="app_name">Ziya</string>
     <string name="notifications">Notifications</string>
     <string name="toggle_theme">Toggle Theme</string>
     <string name="settings">Settings</string>
@@ -7,4 +7,8 @@
     <string name="allow_notifications">Allow Notifications</string>
     <string name="socket_url">Socket URL</string>
     <string name="save">Save</string>
+    <string name="notification_center">Notification Center</string>
+    <string name="stay_updated">Stay updated with your latest notifications</string>
+    <string name="no_notifications">No notifications yet</string>
+    <string name="pull_to_refresh">Pull to refresh</string>
 </resources>
