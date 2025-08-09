@@ -2,10 +2,15 @@ package com.example.ziya;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ActionMode;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -51,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ActionMode actionMode;
     private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
     private View emptyStateLayout;
+    private static final int NOTIFICATION_PERMISSION_CODE = 100;
 
 
     @Override
@@ -67,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
         filterAndDisplayNotifications(); // Initial filter
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateNotificationIcon();
+    }
+
     private void setupToolbar() {
         ImageButton themeButton = findViewById(R.id.theme_button);
         updateThemeIcon(themeButton);
@@ -81,12 +95,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton settingsButton = findViewById(R.id.settings_button);
-        settingsButton.setOnClickListener(v -> {
-            animateButtonPress(settingsButton);
-            showSettingsBottomSheet();
+        ImageButton notificationButton = findViewById(R.id.notification_button);
+        notificationButton.setOnClickListener(v -> {
+            animateButtonPress(v);
+            toggleNotifications();
         });
+        updateNotificationIcon();
     }
+
+    private void toggleNotifications() {
+        if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            // Open notification settings for the app
+            Intent intent = new Intent();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            } else {
+                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                intent.putExtra("app_package", getPackageName());
+                intent.putExtra("app_uid", getApplicationInfo().uid);
+            }
+            startActivity(intent);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+            }
+        }
+    }
+
+    private void updateNotificationIcon() {
+        ImageButton notificationButton = findViewById(R.id.notification_button);
+        if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
+            notificationButton.setImageResource(R.drawable.ic_notifications_on);
+        } else {
+            notificationButton.setImageResource(R.drawable.ic_notifications_off);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notifications Enabled", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Notification Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+            updateNotificationIcon();
+        }
+    }
+
 
     private void updateThemeIcon(ImageButton themeButton) {
         int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -161,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
 
                     // Show a snackbar with an undo option
                     com.google.android.material.snackbar.Snackbar.make(findViewById(android.R.id.content), "Notification deleted", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-                        .setAction("UNDO", v -> {
-                            // Add the notification back to the main list at its original position
-                            allNotifications.add(position, notification);
-                            // Re-filter and display to ensure consistency
-                            filterAndDisplayNotifications();
-                        })
-                        .show();
+                            .setAction("UNDO", v -> {
+                                // Add the notification back to the main list at its original position
+                                allNotifications.add(position, notification);
+                                // Re-filter and display to ensure consistency
+                                filterAndDisplayNotifications();
+                            })
+                            .show();
                 }
             }
 
@@ -195,10 +253,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupSwipeRefresh() {
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(
-            R.color.notif_success,
-            R.color.notif_info,
-            R.color.notif_warning,
-            R.color.notif_error
+                R.color.notif_success,
+                R.color.notif_info,
+                R.color.notif_warning,
+                R.color.notif_error
         );
 
         swipeRefreshLayout.setOnRefreshListener(this::refreshNotifications);
@@ -207,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
     private void refreshNotifications() {
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             List<String[]> newNotifications = java.util.Arrays.asList(
-                new String[]{"success", "Sync Complete", "Your data has been synchronized.", "Just now"},
-                new String[]{"info", "New Update Available", "Version 2.0 is now available for download.", "1m ago"}
+                    new String[]{"success", "Sync Complete", "Your data has been synchronized.", "Just now"},
+                    new String[]{"info", "New Update Available", "Version 2.0 is now available for download.", "1m ago"}
             );
 
             for (String[] notif : newNotifications) {
@@ -454,27 +512,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showSettingsBottomSheet() {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_settings, null);
-        bottomSheetDialog.setContentView(sheetView);
-
-        animateViewIn(sheetView);
-
-        sheetView.findViewById(R.id.save_button).setOnClickListener(v -> {
-            animateButtonPress(v);
-            Toast.makeText(this, "Settings Saved!", Toast.LENGTH_SHORT).show();
-            bottomSheetDialog.dismiss();
-        });
-
-        sheetView.findViewById(R.id.cancel_button).setOnClickListener(v -> {
-            animateButtonPress(v);
-            bottomSheetDialog.dismiss();
-        });
-// 
-        bottomSheetDialog.show();
-    }
-
     private void showNotificationDetail(Notification notification) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_notification_detail, null);
@@ -684,19 +721,27 @@ public class MainActivity extends AppCompatActivity {
 
     private static int getIconResource(String type) {
         switch (type) {
-            case "success": return R.drawable.ic_notification_success;
-            case "error": return R.drawable.ic_notification_error;
-            case "warning": return R.drawable.ic_notification_warning;
-            default: return R.drawable.ic_notification_info;
+            case "success":
+                return R.drawable.ic_notification_success;
+            case "error":
+                return R.drawable.ic_notification_error;
+            case "warning":
+                return R.drawable.ic_notification_warning;
+            default:
+                return R.drawable.ic_notification_info;
         }
     }
 
     private static int getIconColor(String type) {
         switch (type) {
-            case "success": return R.color.notif_success;
-            case "error": return R.color.notif_error;
-            case "warning": return R.color.notif_warning;
-            default: return R.color.notif_info;
+            case "success":
+                return R.color.notif_success;
+            case "error":
+                return R.color.notif_error;
+            case "warning":
+                return R.color.notif_warning;
+            default:
+                return R.color.notif_info;
         }
     }
 }

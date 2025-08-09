@@ -23,8 +23,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
@@ -46,12 +46,12 @@
                     app:tint="?attr/colorOnSurface" />
 
                 <ImageButton
-                    android:id="@+id/settings_button"
+                    android:id="@+id/notification_button"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/circular_ripple"
-                    android:contentDescription="@string/settings"
-                    android:src="@drawable/ic_settings"
+                    android:contentDescription="Toggle Notifications"
+                    android:src="@drawable/ic_notifications_on"
                     app:tint="?attr/colorOnSurface" />
 
             </LinearLayout>
@@ -92,7 +92,7 @@
             android:layout_marginBottom="16dp"
             app:chipSpacingHorizontal="8dp"
             app:singleLine="false">
-            </com.google.android.material.chip.ChipGroup>
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
