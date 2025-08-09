@@ -1,6 +1,3 @@
-
-
-
 package com.example.ziya;
 
 import android.animation.AnimatorSet;
@@ -15,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,10 +25,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         ImageButton themeButton = findViewById(R.id.theme_button);
         updateThemeIcon(themeButton);
         themeButton.setOnClickListener(v -> {
-            // Add animation feedback
             animateButtonPress(themeButton);
             
             int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -85,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton settingsButton = findViewById(R.id.settings_button);
         settingsButton.setOnClickListener(v -> {
-            // Add animation feedback
             animateButtonPress(settingsButton);
             showSettingsBottomSheet();
         });
@@ -94,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
     private void updateThemeIcon(ImageButton themeButton) {
         int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         
-        // Animate icon change
         ObjectAnimator scaleDown = ObjectAnimator.ofFloat(themeButton, "scaleX", 1f, 0.8f);
         scaleDown.setDuration(100);
         ObjectAnimator scaleUp = ObjectAnimator.ofFloat(themeButton, "scaleX", 0.8f, 1f);
@@ -123,16 +117,12 @@ public class MainActivity extends AppCompatActivity {
         allNotifications.add(new Notification("info", "System Maintenance", "Scheduled maintenance upcoming.", "3d ago", true));
         allNotifications.add(new Notification("warning", "Low Disk Space", "Your storage is almost full.", "4d ago", false));
         allNotifications.add(new Notification("success", "New Login", "A new device has logged into your account.", "5d ago", true));
-        
-        // For testing empty state, uncomment the line below:
-        // allNotifications.clear();
     }
 
     private void setupRecyclerView() {
         notificationRecyclerView = findViewById(R.id.notification_recycler_view);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         
-        // Add item animator for smooth animations
         DefaultItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(300);
         animator.setRemoveDuration(300);
@@ -143,14 +133,12 @@ public class MainActivity extends AppCompatActivity {
         notificationAdapter = new NotificationAdapter(new ArrayList<>(), this::onItemClick, this::onItemLongClick, selectedNotifications);
         notificationRecyclerView.setAdapter(notificationAdapter);
         
-        // Add swipe-to-dismiss functionality
         setupSwipeToDelete();
     }
 
+    // Corrected swipe-to-delete implementation
     private void setupSwipeToDelete() {
-        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback simpleCallback = 
-            new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0, androidx.recyclerview.widget.ItemTouchHelper.LEFT) {
-            
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -159,22 +147,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                if (position >= 0 && position < notificationAdapter.getItemCount()) {
+                if (position != RecyclerView.NO_POSITION) {
                     Notification notification = notificationAdapter.getNotifications().get(position);
-                    
-                    // Remove from both the filtered list and the main list
+
+                    // Remove from the main list first
                     allNotifications.remove(notification);
-                    selectedNotifications.remove(notification);
-                    
-                    // Update the display
-                    filterAndDisplayNotifications();
-                    
-                    // Show a snackbar with undo option
-                    androidx.coordinatorlayout.widget.CoordinatorLayout coordinatorLayout = findViewById(android.R.id.content);
-                    com.google.android.material.snackbar.Snackbar.make(coordinatorLayout, "Notification deleted", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                    // Then remove from the adapter's current list
+                    notificationAdapter.getNotifications().remove(position);
+                    // Finally, notify the adapter about the item removal at that specific position
+                    notificationAdapter.notifyItemRemoved(position);
+
+                    // Show a snackbar with an undo option
+                    com.google.android.material.snackbar.Snackbar.make(findViewById(android.R.id.content), "Notification deleted", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
                         .setAction("UNDO", v -> {
-                            // Restore the notification
+                            // Add the notification back to the main list at its original position
                             allNotifications.add(position, notification);
+                            // Re-filter and display to ensure consistency
                             filterAndDisplayNotifications();
                         })
                         .show();
@@ -183,31 +171,23 @@ public class MainActivity extends AppCompatActivity {
             
             @Override
             public void onChildDraw(@NonNull android.graphics.Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                if (actionState == androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     View itemView = viewHolder.itemView;
-                    
-                    // Add visual feedback during swipe
-                    float alpha = 1.0f - Math.abs(dX) / itemView.getWidth();
+                    final float alpha = 1.0f - Math.abs(dX) / (float) itemView.getWidth();
                     itemView.setAlpha(alpha);
-                    
-                    // Add scale effect
-                    float scale = 1.0f - Math.abs(dX) / itemView.getWidth() * 0.1f;
-                    itemView.setScaleY(scale);
+                    itemView.setTranslationX(dX);
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
             
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-                // Reset visual state
                 viewHolder.itemView.setAlpha(1.0f);
-                viewHolder.itemView.setScaleY(1.0f);
+                viewHolder.itemView.setTranslationX(0f);
             }
-        };
-        
-        androidx.recyclerview.widget.ItemTouchHelper itemTouchHelper = new androidx.recyclerview.widget.ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(notificationRecyclerView);
+        }).attachToRecyclerView(notificationRecyclerView);
     }
 
     private void setupSwipeRefresh() {
@@ -219,23 +199,17 @@ public class MainActivity extends AppCompatActivity {
             R.color.notif_error
         );
         
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            // Simulate refreshing notifications
-            refreshNotifications();
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::refreshNotifications);
     }
 
     private void refreshNotifications() {
-        // Simulate network delay
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            // Add some new notifications to simulate refresh
             List<String[]> newNotifications = java.util.Arrays.asList(
                 new String[]{"success", "Sync Complete", "Your data has been synchronized.", "Just now"},
                 new String[]{"info", "New Update Available", "Version 2.0 is now available for download.", "1m ago"}
             );
             
             for (String[] notif : newNotifications) {
-                // Add at the beginning to show as newest
                 allNotifications.add(0, new Notification(notif[0], notif[1], notif[2], notif[3], false));
             }
             
@@ -243,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
             
             Toast.makeText(this, "Notifications updated", Toast.LENGTH_SHORT).show();
-        }, 1500); // 1.5 second delay to simulate network call
+        }, 1500);
     }
 
     private void setupEmptyState() {
@@ -304,10 +278,8 @@ public class MainActivity extends AppCompatActivity {
             MenuItem selectAllItem = menu.findItem(R.id.action_select_all);
             if (selectionCount == notificationAdapter.getItemCount()) {
                 selectAllItem.setTitle("Deselect All");
-                selectAllItem.setIcon(R.drawable.ic_notification_success); // Replace with a "deselect all" icon if you have one
             } else {
                 selectAllItem.setTitle("Select All");
-                selectAllItem.setIcon(R.drawable.ic_filter_all);
             }
             return true;
         }
@@ -322,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.action_mark_read) {
                 for (Notification notification : selectedNotifications) {
-                    notification.setRead(true); // Always mark as read
+                    notification.setRead(true);
                 }
                 filterAndDisplayNotifications();
                 mode.finish();
@@ -350,13 +322,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+    // Updated to use a MaterialButton for the "all" filter
     private void setupFilterButtons() {
         LinearLayout filterContainer = findViewById(R.id.filter_container);
         String[] filters = {"all", "success", "error", "warning", "info"};
         int[] filterIcons = {
-                R.drawable.ic_filter_all, R.drawable.ic_notification_success, R.drawable.ic_notification_error,
-                R.drawable.ic_notification_warning, R.drawable.ic_notification_info
+                -1, // No icon for "all"
+                R.drawable.ic_notification_success,
+                R.drawable.ic_notification_error,
+                R.drawable.ic_notification_warning,
+                R.drawable.ic_notification_info
         };
 
         filterContainer.removeAllViews();
@@ -367,118 +342,107 @@ public class MainActivity extends AppCompatActivity {
         int marginInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginInDp, getResources().getDisplayMetrics());
 
         for (int i = 0; i < filters.length; i++) {
-            ImageButton button = new ImageButton(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(sizeInPx, sizeInPx);
-            params.setMargins(marginInPx, 0, marginInPx, 0);
-            button.setLayoutParams(params);
-
-            button.setImageResource(filterIcons[i]);
-            button.setBackgroundResource(R.drawable.filter_button_background);
-            button.setPadding(12, 12, 12, 12);
-            button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-
-
             final String filter = filters[i];
-            button.setOnClickListener(v -> {
-                // Add animation feedback
-                animateButtonPress(button);
-                
-                currentFilter = filter;
-                updateFilterButtons();
-                filterAndDisplayNotifications();
-            });
-            filterContainer.addView(button);
+
+            if (filter.equals("all")) {
+                MaterialButton button = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, sizeInPx);
+                params.setMargins(marginInPx, 0, marginInPx, 0);
+                button.setLayoutParams(params);
+                button.setText("All Notifications");
+                button.setOnClickListener(v -> {
+                    animateButtonPress(v);
+                    currentFilter = filter;
+                    updateFilterButtons();
+                    filterAndDisplayNotifications();
+                });
+                filterContainer.addView(button);
+            } else {
+                ImageButton button = new ImageButton(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(sizeInPx, sizeInPx);
+                params.setMargins(marginInPx, 0, marginInPx, 0);
+                button.setLayoutParams(params);
+                button.setImageResource(filterIcons[i]);
+                button.setBackgroundResource(R.drawable.filter_button_background);
+                button.setPadding(12, 12, 12, 12);
+                button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+                button.setOnClickListener(v -> {
+                    animateButtonPress(v);
+                    currentFilter = filter;
+                    updateFilterButtons();
+                    filterAndDisplayNotifications();
+                });
+                filterContainer.addView(button);
+            }
         }
         updateFilterButtons();
     }
 
+    // Updated to handle both MaterialButton and ImageButton states
     private void updateFilterButtons() {
         LinearLayout filterContainer = findViewById(R.id.filter_container);
         String[] filters = {"all", "success", "error", "warning", "info"};
+        boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
 
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
-            ImageButton button = (ImageButton) filterContainer.getChildAt(i);
+            View buttonView = filterContainer.getChildAt(i);
             String filterType = filters[i];
             boolean isActive = filterType.equals(currentFilter);
 
-            int backgroundColor;
-            int iconColor;
-
-            boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-
-            if (isActive) {
-                iconColor = ContextCompat.getColor(this, R.color.white);
-                switch (filterType) {
-                    case "success":
-                        backgroundColor = ContextCompat.getColor(this, R.color.notif_success);
-                        break;
-                    case "error":
-                        backgroundColor = ContextCompat.getColor(this, R.color.notif_error);
-                        break;
-                    case "warning":
-                        backgroundColor = ContextCompat.getColor(this, R.color.notif_warning);
-                        break;
-                    case "info":
-                        backgroundColor = ContextCompat.getColor(this, R.color.notif_info);
-                        break;
-                    default: // "all"
-                        backgroundColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
-                        break;
+            if (buttonView instanceof MaterialButton) {
+                MaterialButton button = (MaterialButton) buttonView;
+                if (isActive) {
+                    button.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+                    button.setTextColor(ContextCompat.getColor(this, R.color.white));
+                } else {
+                    button.setBackgroundColor(ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight));
+                    button.setTextColor(ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight));
+                    button.setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorSurfaceVariantDark)));
                 }
-                
-                // Add activation animation
-                ObjectAnimator pulse = ObjectAnimator.ofFloat(button, "scaleX", 1f, 1.1f, 1f);
-                ObjectAnimator pulseY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 1.1f, 1f);
-                pulse.setDuration(200);
-                pulseY.setDuration(200);
-                AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(pulse, pulseY);
-                animatorSet.start();
-                
-            } else {
-                // Inactive state colors
-                switch (filterType) {
-                    case "success":
-                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_success_dark : R.color.white);
-                        iconColor = ContextCompat.getColor(this, R.color.notif_success);
-                        break;
-                    case "error":
-                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_error_dark : R.color.white);
-                        iconColor = ContextCompat.getColor(this, R.color.notif_error);
-                        break;
-                    case "warning":
-                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_warning_dark : R.color.white);
-                        iconColor = ContextCompat.getColor(this, R.color.notif_warning);
-                        break;
-                    case "info":
-                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_info_dark : R.color.white);
-                        iconColor = ContextCompat.getColor(this, R.color.notif_info);
-                        break;
-                    default: // "all"
-                        backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight);
-                        iconColor = ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight);
-                        break;
+            } else if (buttonView instanceof ImageButton) {
+                ImageButton button = (ImageButton) buttonView;
+                int backgroundColor;
+                int iconColor;
+
+                if (isActive) {
+                    iconColor = ContextCompat.getColor(this, R.color.white);
+                    switch (filterType) {
+                        case "success": backgroundColor = ContextCompat.getColor(this, R.color.notif_success); break;
+                        case "error": backgroundColor = ContextCompat.getColor(this, R.color.notif_error); break;
+                        case "warning": backgroundColor = ContextCompat.getColor(this, R.color.notif_warning); break;
+                        case "info": backgroundColor = ContextCompat.getColor(this, R.color.notif_info); break;
+                        default: backgroundColor = ContextCompat.getColor(this, R.color.colorPrimaryDark); break;
+                    }
+                } else {
+                    switch (filterType) {
+                        case "success":
+                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_success_dark : R.color.white);
+                            iconColor = ContextCompat.getColor(this, R.color.notif_success);
+                            break;
+                        case "error":
+                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_error_dark : R.color.white);
+                            iconColor = ContextCompat.getColor(this, R.color.notif_error);
+                            break;
+                        case "warning":
+                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_warning_dark : R.color.white);
+                            iconColor = ContextCompat.getColor(this, R.color.notif_warning);
+                            break;
+                        case "info":
+                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_info_dark : R.color.white);
+                            iconColor = ContextCompat.getColor(this, R.color.notif_info);
+                            break;
+                        default:
+                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight);
+                            iconColor = ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight);
+                            break;
+                    }
                 }
-            }
-            
-            // Animate color changes smoothly
-            try {
-                android.animation.ValueAnimator backgroundAnimator = android.animation.ValueAnimator.ofArgb(
-                    ContextCompat.getColor(this, android.R.color.transparent), backgroundColor);
-                backgroundAnimator.setDuration(250);
-                backgroundAnimator.addUpdateListener(animation -> {
-                    button.setBackgroundTintList(ColorStateList.valueOf((Integer) animation.getAnimatedValue()));
-                });
-                backgroundAnimator.start();
-            } catch (Exception e) {
-                // Fallback to immediate color change
                 button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
+                button.setImageTintList(ColorStateList.valueOf(iconColor));
             }
-            
-            button.setImageTintList(ColorStateList.valueOf(iconColor));
         }
     }
-
 
     private void filterAndDisplayNotifications() {
         List<Notification> filteredList;
@@ -491,7 +455,6 @@ public class MainActivity extends AppCompatActivity {
         }
         notificationAdapter.updateNotifications(filteredList);
         
-        // Handle empty state
         if (filteredList.isEmpty()) {
             notificationRecyclerView.setVisibility(View.GONE);
             emptyStateLayout.setVisibility(View.VISIBLE);
@@ -507,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_settings, null);
         bottomSheetDialog.setContentView(sheetView);
         
-        // Add entrance animation
         animateViewIn(sheetView);
         
         sheetView.findViewById(R.id.save_button).setOnClickListener(v -> {
@@ -529,7 +491,6 @@ public class MainActivity extends AppCompatActivity {
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_notification_detail, null);
         bottomSheetDialog.setContentView(sheetView);
 
-        // Add entrance animation
         animateViewIn(sheetView);
 
         TextView title = sheetView.findViewById(R.id.detail_title);
@@ -546,7 +507,6 @@ public class MainActivity extends AppCompatActivity {
         icon.setImageResource(iconRes);
         icon.setColorFilter(ContextCompat.getColor(this, colorRes));
 
-        // Add close button handler
         sheetView.findViewById(R.id.close_button).setOnClickListener(v -> {
             animateButtonPress(v);
             bottomSheetDialog.dismiss();
@@ -560,7 +520,6 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetDialog.show();
     }
 
-    // Animation helper methods
     private void animateButtonPress(View button) {
         ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(button, "scaleX", 1f, 0.95f);
         ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 0.95f);
@@ -676,27 +635,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void bind(final Notification notification, final OnItemClickListener listener, final OnItemLongClickListener longClickListener, boolean isSelected) {
-                // Handle selection overlay
                 View selectionOverlay = itemView.findViewById(R.id.selection_overlay);
                 if (selectionOverlay != null) {
                     selectionOverlay.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-                    if (isSelected) {
-                        // Add subtle scale animation for selection
-                        ObjectAnimator scaleX = ObjectAnimator.ofFloat(itemView, "scaleX", 1f, 1.02f, 1f);
-                        ObjectAnimator scaleY = ObjectAnimator.ofFloat(itemView, "scaleY", 1f, 1.02f, 1f);
-                        scaleX.setDuration(200);
-                        scaleY.setDuration(200);
-                        AnimatorSet animatorSet = new AnimatorSet();
-                        animatorSet.playTogether(scaleX, scaleY);
-                        animatorSet.start();
-                    }
                 }
                 
                 title.setText(notification.getTitle());
                 message.setText(notification.getMessage());
                 time.setText(notification.getTime());
 
-                // Handle unread indicator
                 unreadIndicator.setVisibility(notification.isRead() ? View.GONE : View.VISIBLE);
                 title.setTypeface(null, notification.isRead() ? Typeface.NORMAL : Typeface.BOLD);
 
@@ -705,29 +652,9 @@ public class MainActivity extends AppCompatActivity {
                 icon.setImageResource(iconRes);
                 icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), colorRes));
 
-                itemView.setOnClickListener(v -> {
-                    // Add ripple animation on click
-                    ObjectAnimator scaleDown = ObjectAnimator.ofFloat(v, "scaleX", 1f, 0.98f);
-                    ObjectAnimator scaleUp = ObjectAnimator.ofFloat(v, "scaleX", 0.98f, 1f);
-                    scaleDown.setDuration(50);
-                    scaleUp.setDuration(50);
-                    scaleDown.addListener(new android.animation.AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(android.animation.Animator animation) {
-                            scaleUp.start();
-                        }
-                    });
-                    scaleDown.start();
-                    
-                    listener.onItemClick(notification);
-                });
+                itemView.setOnClickListener(v -> listener.onItemClick(notification));
                 
                 itemView.setOnLongClickListener(v -> {
-                    // Add feedback animation for long click
-                    ObjectAnimator pulse = ObjectAnimator.ofFloat(v, "alpha", 1f, 0.7f, 1f);
-                    pulse.setDuration(200);
-                    pulse.start();
-                    
                     longClickListener.onItemLongClick(notification);
                     return true;
                 });
