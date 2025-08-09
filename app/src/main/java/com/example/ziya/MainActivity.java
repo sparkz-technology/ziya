@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity {
             animateButtonPress(v);
             bottomSheetDialog.dismiss();
         });
-
+// 
         bottomSheetDialog.show();
     }
 
