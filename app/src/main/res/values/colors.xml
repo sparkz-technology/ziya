@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Dark theme colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-<color name="filter_chip_text_color">#FFFFFF</color>
-    <color name="colorPrimaryLight">#000000</color>
-    <color name="colorOnPrimaryLight">#FFFFFF</color>
-    <color name="colorSurfaceLight">#FFFFFF</color>
-    <color name="colorOnSurfaceLight">#000000</color>
-    <color name="colorBackgroundLight">#FFFFFF</color>
-    <color name="colorSurfaceVariantLight">#E0E0E0</color>
+    <color name="light_gray">#FFD3D3D3</color>
+    <color name="dark_gray">#FFA9A9A9</color>
+    <color name="red">#FFFF0000</color>
+    <color name="green">#FF00FF00</color>
+    <color name="blue">#FF0000FF</color>
+    <color name="yellow">#FFFFFF00</color>
+    <color name="orange">#FFFFA500</color>
+    <color name="purple">#FF800080</color>
+    <color name="transparent">#00000000</color>
 
-    <color name="colorPrimaryDark">#FFFFFF</color>
-    <color name="colorOnPrimaryDark">#000000</color>
-    <color name="colorSurfaceDark">#000000</color>
-    <color name="colorOnSurfaceDark">#FFFFFF</color>
-    <color name="colorBackgroundDark">#000000</color>
-    <color name="colorSurfaceVariantDark">#3A3A3A</color>
+    <!-- Material Component Colors for Dark Theme -->
+    <color name="colorPrimary">#BB86FC</color>
+    <color name="colorPrimaryVariant">#3700B3</color>
+    <color name="colorOnPrimary">@color/black</color>
+    <color name="colorSecondary">#03DAC6</color>
+    <color name="colorSecondaryVariant">#03DAC6</color>
+    <color name="colorOnSecondary">@color/black</color>
+    <color name="colorError">#CF6679</color>
+    <color name="colorOnError">@color/black</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorOnSurface">@color/white</color>
+    <color name="colorBackground">#121212</color>
+    <color name="colorOnBackground">@color/white</color>
 
-    <color name="notif_success">#4CAF50</color>
-    <color name="notif_error">#F44336</color>
-    <color name="notif_warning">#FFC107</color>
-    <color name="notif_info">#2196F3</color>
-    <color name="notif_unread_dot">#000000</color>
-
-    <color name="filter_inactive_success_dark">#1A4CAF50</color> <color name="filter_inactive_error_dark">#1AF44336</color>   <color name="filter_inactive_warning_dark">#1AFFC107</color><color name="filter_inactive_info_dark">#1A2196F3</color>   </resources>
+    <!-- Custom App Colors for Dark Theme -->
+    <color name="unread_dot_color">#FF4081</color>
+    <color name="selection_overlay">#40FFFFFF</color>
+    <color name="filter_button_selected">#33FFFFFF</color>
+    <color name="filter_button_unselected">@android:color/transparent</color>
+    <color name="bottom_sheet_background">@color/colorSurface</color>
+    <color name="bottom_sheet_handle">#555555</color>
+    <color name="contextual_action_bar_background">?attr/colorPrimary</color>
+    <color name="status_bar_color">?attr/colorPrimaryVariant</color>
+</resources>
