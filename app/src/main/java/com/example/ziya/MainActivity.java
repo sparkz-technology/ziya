@@ -351,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFilterButtons() {
         ChipGroup filterContainer = findViewById(R.id.filter_container);
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
             Chip chip = (Chip) filterContainer.getChildAt(i);
@@ -358,34 +359,60 @@ public class MainActivity extends AppCompatActivity {
             boolean isActive = filterType.equals(currentFilter);
             chip.setChecked(isActive);
 
-            int activeColor;
-            switch (filterType) {
-                case "success":
-                    activeColor = ContextCompat.getColor(this, R.color.notif_success);
-                    break;
-                case "error":
-                    activeColor = ContextCompat.getColor(this, R.color.notif_error);
-                    break;
-                case "warning":
-                    activeColor = ContextCompat.getColor(this, R.color.notif_warning);
-                    break;
-                case "info":
-                    activeColor = ContextCompat.getColor(this, R.color.notif_info);
-                    break;
-                default:
-                    activeColor = ContextCompat.getColor(this, R.color.black);
-                    break;
-            }
-
             if (isActive) {
+                int activeColor;
+                int activeTextColor;
+
+                if (filterType.equals("all")) {
+                    if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                        activeColor = ContextCompat.getColor(this, R.color.white);
+                        activeTextColor = ContextCompat.getColor(this, R.color.black);
+                    } else {
+                        activeColor = ContextCompat.getColor(this, R.color.black);
+                        activeTextColor = ContextCompat.getColor(this, R.color.white);
+                    }
+                } else {
+                    switch (filterType) {
+                        case "success":
+                            activeColor = ContextCompat.getColor(this, R.color.notif_success);
+                            break;
+                        case "error":
+                            activeColor = ContextCompat.getColor(this, R.color.notif_error);
+                            break;
+                        case "warning":
+                            activeColor = ContextCompat.getColor(this, R.color.notif_warning);
+                            break;
+                        default: // info
+                            activeColor = ContextCompat.getColor(this, R.color.notif_info);
+                            break;
+                    }
+                    activeTextColor = ContextCompat.getColor(this, R.color.white);
+                }
+
                 chip.setChipBackgroundColor(ColorStateList.valueOf(activeColor));
-                chip.setTextColor(ContextCompat.getColor(this, R.color.white));
-            } else {
-                chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
-                chip.setTextColor(ContextCompat.getColor(this, R.color.black));
+                chip.setTextColor(activeTextColor);
+                chip.setChipStrokeWidth(0); // No border when active
+
+            } else { // Inactive buttons
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.transparent)));
+                int strokeColor;
+                int textColor;
+
+                if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                    strokeColor = ContextCompat.getColor(this, R.color.white);
+                    textColor = ContextCompat.getColor(this, R.color.white);
+                } else {
+                    strokeColor = ContextCompat.getColor(this, R.color.black);
+                    textColor = ContextCompat.getColor(this, R.color.black);
+                }
+
+                chip.setChipStrokeColor(ColorStateList.valueOf(strokeColor));
+                chip.setTextColor(textColor);
+                chip.setChipStrokeWidth(4); // Set border width in pixels
             }
         }
     }
+
 
     private String getFilterTypeForChip(Chip chip) {
         String chipText = chip.getText().toString().toLowerCase();
