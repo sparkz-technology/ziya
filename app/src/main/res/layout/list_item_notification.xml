@@ -8,6 +8,7 @@
     android:layout_marginVertical="4dp">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/notification_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
@@ -89,13 +90,5 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/selection_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/selection_overlay"
-        android:layout_margin="4dp"
-        android:visibility="gone" />
 
 </FrameLayout>

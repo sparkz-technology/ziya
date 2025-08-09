@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
         if (!isSelectionMode) {
             isSelectionMode = true;
             actionMode = startSupportActionMode(actionModeCallback);
+            notificationAdapter.setSelectionMode(true);
         }
         toggleSelection(notification);
     }
@@ -318,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDestroyActionMode(ActionMode mode) {
             isSelectionMode = false;
             selectedNotifications.clear();
+            notificationAdapter.setSelectionMode(false);
             notificationAdapter.notifyDataSetChanged();
             actionMode = null;
         }
@@ -562,6 +565,11 @@ public class MainActivity extends AppCompatActivity {
         private final OnItemClickListener listener;
         private final OnItemLongClickListener longClickListener;
         private final Set<Notification> selectedItems;
+        private boolean isSelectionMode = false;
+
+        public void setSelectionMode(boolean selectionMode) {
+            isSelectionMode = selectionMode;
+        }
 
         public interface OnItemClickListener {
             void onItemClick(Notification notification);
@@ -589,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Notification notification = notifications.get(position);
             boolean isSelected = selectedItems.contains(notification);
-            holder.bind(notification, listener, longClickListener, isSelected);
+            holder.bind(notification, listener, longClickListener, isSelected, isSelectionMode);
         }
 
         @Override
@@ -610,6 +618,7 @@ public class MainActivity extends AppCompatActivity {
             private final TextView title, message, time;
             private final ImageView icon;
             private final View unreadIndicator;
+            private final MaterialCardView cardView;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -618,28 +627,53 @@ public class MainActivity extends AppCompatActivity {
                 this.time = itemView.findViewById(R.id.notification_time);
                 this.icon = itemView.findViewById(R.id.notification_icon);
                 this.unreadIndicator = itemView.findViewById(R.id.unread_indicator);
+                this.cardView = itemView.findViewById(R.id.notification_card);
             }
 
-            public void bind(final Notification notification, final OnItemClickListener listener, final OnItemLongClickListener longClickListener, boolean isSelected) {
-                View selectionOverlay = itemView.findViewById(R.id.selection_overlay);
-                if (selectionOverlay != null) {
-                    selectionOverlay.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-                }
-
+            public void bind(final Notification notification, final OnItemClickListener listener, final OnItemLongClickListener longClickListener, boolean isSelected, boolean isSelectionMode) {
                 title.setText(notification.getTitle());
                 message.setText(notification.getMessage());
                 time.setText(notification.getTime());
-
                 unreadIndicator.setVisibility(notification.isRead() ? View.GONE : View.VISIBLE);
-                title.setTypeface(null, notification.isRead() ? Typeface.NORMAL : Typeface.BOLD);
 
-                int iconRes = getIconResource(notification.getType());
-                int colorRes = getIconColor(notification.getType());
-                icon.setImageResource(iconRes);
-                icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), colorRes));
+                if (isSelectionMode) {
+                    if (isSelected) {
+                        icon.setImageResource(R.drawable.ic_mark_as_read);
+                        icon.setBackgroundResource(R.drawable.circular_ripple);
+                        int nightModeFlags = itemView.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                            icon.getBackground().setTint(ContextCompat.getColor(itemView.getContext(), R.color.notif_info));
+                            cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.filter_inactive_info_dark));
+                        } else {
+                            icon.getBackground().setTint(ContextCompat.getColor(itemView.getContext(), R.color.selection_color_light));
+                            cardView.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.selection_color_light));
+                        }
+                        icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), R.color.white));
+                        title.setTypeface(null, Typeface.BOLD);
+                    } else {
+                        int iconRes = getIconResource(notification.getType());
+                        icon.setImageResource(iconRes);
+                        icon.setBackgroundResource(R.drawable.circular_ripple);
+                        icon.getBackground().setTintList(null);
+                        icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), getIconColor(notification.getType())));
+                        TypedValue outValue = new TypedValue();
+                        itemView.getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, outValue, true);
+                        cardView.setCardBackgroundColor(outValue.data);
+                        title.setTypeface(null, Typeface.NORMAL);
+                    }
+                } else {
+                    int iconRes = getIconResource(notification.getType());
+                    icon.setImageResource(iconRes);
+                    icon.setBackgroundResource(R.drawable.circular_ripple);
+                    icon.getBackground().setTintList(null);
+                    icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), getIconColor(notification.getType())));
+                    TypedValue outValue = new TypedValue();
+                    itemView.getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, outValue, true);
+                    cardView.setCardBackgroundColor(outValue.data);
+                    title.setTypeface(null, notification.isRead() ? Typeface.NORMAL : Typeface.BOLD);
+                }
 
                 itemView.setOnClickListener(v -> listener.onItemClick(notification));
-
                 itemView.setOnLongClickListener(v -> {
                     longClickListener.onItemLongClick(notification);
                     return true;
