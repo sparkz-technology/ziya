@@ -2,7 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
+<color name="filter_chip_text_color">#FFFFFF</color>
     <color name="colorPrimaryLight">#000000</color>
     <color name="colorOnPrimaryLight">#FFFFFF</color>
     <color name="colorSurfaceLight">#FFFFFF</color>

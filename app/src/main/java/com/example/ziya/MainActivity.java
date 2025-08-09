@@ -373,7 +373,9 @@ public class MainActivity extends AppCompatActivity {
                     activeColor = ContextCompat.getColor(this, R.color.notif_info);
                     break;
                 default:
-                    activeColor = ContextCompat.getColor(this, R.color.black);
+                    TypedValue typedValue = new TypedValue();
+                    getTheme().resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true);
+                    activeColor = typedValue.data;
                     break;
             }
 
@@ -381,8 +383,11 @@ public class MainActivity extends AppCompatActivity {
                 chip.setChipBackgroundColor(ColorStateList.valueOf(activeColor));
                 chip.setTextColor(ContextCompat.getColor(this, R.color.white));
             } else {
-                chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
-                chip.setTextColor(ContextCompat.getColor(this, R.color.black));
+                TypedValue typedValue = new TypedValue();
+                getTheme().resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true);
+                chip.setChipBackgroundColor(ColorStateList.valueOf(typedValue.data));
+                getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true);
+                chip.setTextColor(typedValue.data);
             }
         }
     }
