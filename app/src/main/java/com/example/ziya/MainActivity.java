@@ -30,7 +30,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         updateThemeIcon(themeButton);
         themeButton.setOnClickListener(v -> {
             animateButtonPress(themeButton);
-            
+
             int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
             if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -88,12 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateThemeIcon(ImageButton themeButton) {
         int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        
+
         ObjectAnimator scaleDown = ObjectAnimator.ofFloat(themeButton, "scaleX", 1f, 0.8f);
         scaleDown.setDuration(100);
         ObjectAnimator scaleUp = ObjectAnimator.ofFloat(themeButton, "scaleX", 0.8f, 1f);
         scaleUp.setDuration(100);
-        
+
         scaleDown.addListener(new android.animation.AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(android.animation.Animator animation) {
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 scaleUp.start();
             }
         });
-        
+
         scaleDown.start();
     }
 
@@ -122,17 +123,17 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         notificationRecyclerView = findViewById(R.id.notification_recycler_view);
         notificationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
+
         DefaultItemAnimator animator = new DefaultItemAnimator();
         animator.setAddDuration(300);
         animator.setRemoveDuration(300);
         animator.setMoveDuration(300);
         animator.setChangeDuration(300);
         notificationRecyclerView.setItemAnimator(animator);
-        
+
         notificationAdapter = new NotificationAdapter(new ArrayList<>(), this::onItemClick, this::onItemLongClick, selectedNotifications);
         notificationRecyclerView.setAdapter(notificationAdapter);
-        
+
         setupSwipeToDelete();
     }
 
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 }
             }
-            
+
             @Override
             public void onChildDraw(@NonNull android.graphics.Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
@@ -180,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 }
             }
-            
+
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             R.color.notif_warning,
             R.color.notif_error
         );
-        
+
         swipeRefreshLayout.setOnRefreshListener(this::refreshNotifications);
     }
 
@@ -208,14 +209,14 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{"success", "Sync Complete", "Your data has been synchronized.", "Just now"},
                 new String[]{"info", "New Update Available", "Version 2.0 is now available for download.", "1m ago"}
             );
-            
+
             for (String[] notif : newNotifications) {
                 allNotifications.add(0, new Notification(notif[0], notif[1], notif[2], notif[3], false));
             }
-            
+
             filterAndDisplayNotifications();
             swipeRefreshLayout.setRefreshing(false);
-            
+
             Toast.makeText(this, "Notifications updated", Toast.LENGTH_SHORT).show();
         }, 1500);
     }
@@ -322,125 +323,83 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // Updated to use a MaterialButton for the "all" filter
     private void setupFilterButtons() {
-        LinearLayout filterContainer = findViewById(R.id.filter_container);
+        ChipGroup filterContainer = findViewById(R.id.filter_container);
         String[] filters = {"all", "success", "error", "warning", "info"};
-        int[] filterIcons = {
-                -1, // No icon for "all"
-                R.drawable.ic_notification_success,
-                R.drawable.ic_notification_error,
-                R.drawable.ic_notification_warning,
-                R.drawable.ic_notification_info
-        };
+        String[] filterNames = {"All", "Success", "Error", "Warning", "Info"};
 
         filterContainer.removeAllViews();
 
-        int sizeInDp = 48;
-        int marginInDp = 4;
-        int sizeInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeInDp, getResources().getDisplayMetrics());
-        int marginInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginInDp, getResources().getDisplayMetrics());
-
         for (int i = 0; i < filters.length; i++) {
             final String filter = filters[i];
+            final String filterName = filterNames[i];
 
-            if (filter.equals("all")) {
-                MaterialButton button = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, sizeInPx);
-                params.setMargins(marginInPx, 0, marginInPx, 0);
-                button.setLayoutParams(params);
-                button.setText("All Notifications");
-                button.setOnClickListener(v -> {
-                    animateButtonPress(v);
-                    currentFilter = filter;
-                    updateFilterButtons();
-                    filterAndDisplayNotifications();
-                });
-                filterContainer.addView(button);
-            } else {
-                ImageButton button = new ImageButton(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(sizeInPx, sizeInPx);
-                params.setMargins(marginInPx, 0, marginInPx, 0);
-                button.setLayoutParams(params);
-                button.setImageResource(filterIcons[i]);
-                button.setBackgroundResource(R.drawable.filter_button_background);
-                button.setPadding(12, 12, 12, 12);
-                button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-
-                button.setOnClickListener(v -> {
-                    animateButtonPress(v);
-                    currentFilter = filter;
-                    updateFilterButtons();
-                    filterAndDisplayNotifications();
-                });
-                filterContainer.addView(button);
-            }
+            Chip chip = new Chip(this);
+            chip.setText(filterName);
+            chip.setCheckable(true);
+            chip.setClickable(true);
+            chip.setChecked(filter.equals(currentFilter));
+            chip.setOnClickListener(v -> {
+                currentFilter = filter;
+                filterAndDisplayNotifications();
+                updateFilterButtons();
+            });
+            filterContainer.addView(chip);
         }
         updateFilterButtons();
     }
 
-    // Updated to handle both MaterialButton and ImageButton states
     private void updateFilterButtons() {
-        LinearLayout filterContainer = findViewById(R.id.filter_container);
-        String[] filters = {"all", "success", "error", "warning", "info"};
-        boolean isNightMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        ChipGroup filterContainer = findViewById(R.id.filter_container);
 
         for (int i = 0; i < filterContainer.getChildCount(); i++) {
-            View buttonView = filterContainer.getChildAt(i);
-            String filterType = filters[i];
+            Chip chip = (Chip) filterContainer.getChildAt(i);
+            String filterType = getFilterTypeForChip(chip);
             boolean isActive = filterType.equals(currentFilter);
+            chip.setChecked(isActive);
 
-            if (buttonView instanceof MaterialButton) {
-                MaterialButton button = (MaterialButton) buttonView;
-                if (isActive) {
-                    button.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-                    button.setTextColor(ContextCompat.getColor(this, R.color.white));
-                } else {
-                    button.setBackgroundColor(ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight));
-                    button.setTextColor(ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight));
-                    button.setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorSurfaceVariantDark)));
-                }
-            } else if (buttonView instanceof ImageButton) {
-                ImageButton button = (ImageButton) buttonView;
-                int backgroundColor;
-                int iconColor;
-
-                if (isActive) {
-                    iconColor = ContextCompat.getColor(this, R.color.white);
-                    switch (filterType) {
-                        case "success": backgroundColor = ContextCompat.getColor(this, R.color.notif_success); break;
-                        case "error": backgroundColor = ContextCompat.getColor(this, R.color.notif_error); break;
-                        case "warning": backgroundColor = ContextCompat.getColor(this, R.color.notif_warning); break;
-                        case "info": backgroundColor = ContextCompat.getColor(this, R.color.notif_info); break;
-                        default: backgroundColor = ContextCompat.getColor(this, R.color.colorPrimaryDark); break;
-                    }
-                } else {
-                    switch (filterType) {
-                        case "success":
-                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_success_dark : R.color.white);
-                            iconColor = ContextCompat.getColor(this, R.color.notif_success);
-                            break;
-                        case "error":
-                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_error_dark : R.color.white);
-                            iconColor = ContextCompat.getColor(this, R.color.notif_error);
-                            break;
-                        case "warning":
-                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_warning_dark : R.color.white);
-                            iconColor = ContextCompat.getColor(this, R.color.notif_warning);
-                            break;
-                        case "info":
-                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.filter_inactive_info_dark : R.color.white);
-                            iconColor = ContextCompat.getColor(this, R.color.notif_info);
-                            break;
-                        default:
-                            backgroundColor = ContextCompat.getColor(this, isNightMode ? R.color.colorSurfaceVariantDark : R.color.colorSurfaceVariantLight);
-                            iconColor = ContextCompat.getColor(this, isNightMode ? R.color.colorOnSurfaceDark : R.color.colorOnSurfaceLight);
-                            break;
-                    }
-                }
-                button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
-                button.setImageTintList(ColorStateList.valueOf(iconColor));
+            int activeColor;
+            switch (filterType) {
+                case "success":
+                    activeColor = ContextCompat.getColor(this, R.color.notif_success);
+                    break;
+                case "error":
+                    activeColor = ContextCompat.getColor(this, R.color.notif_error);
+                    break;
+                case "warning":
+                    activeColor = ContextCompat.getColor(this, R.color.notif_warning);
+                    break;
+                case "info":
+                    activeColor = ContextCompat.getColor(this, R.color.notif_info);
+                    break;
+                default:
+                    activeColor = ContextCompat.getColor(this, R.color.black);
+                    break;
             }
+
+            if (isActive) {
+                chip.setChipBackgroundColor(ColorStateList.valueOf(activeColor));
+                chip.setTextColor(ContextCompat.getColor(this, R.color.white));
+            } else {
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
+                chip.setTextColor(ContextCompat.getColor(this, R.color.black));
+            }
+        }
+    }
+
+    private String getFilterTypeForChip(Chip chip) {
+        String chipText = chip.getText().toString().toLowerCase();
+        switch (chipText) {
+            case "success":
+                return "success";
+            case "error":
+                return "error";
+            case "warning":
+                return "warning";
+            case "info":
+                return "info";
+            default:
+                return "all";
         }
     }
 
@@ -454,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
                     .collect(Collectors.toList());
         }
         notificationAdapter.updateNotifications(filteredList);
-        
+
         if (filteredList.isEmpty()) {
             notificationRecyclerView.setVisibility(View.GONE);
             emptyStateLayout.setVisibility(View.VISIBLE);
@@ -469,20 +428,20 @@ public class MainActivity extends AppCompatActivity {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_settings, null);
         bottomSheetDialog.setContentView(sheetView);
-        
+
         animateViewIn(sheetView);
-        
+
         sheetView.findViewById(R.id.save_button).setOnClickListener(v -> {
             animateButtonPress(v);
             Toast.makeText(this, "Settings Saved!", Toast.LENGTH_SHORT).show();
             bottomSheetDialog.dismiss();
         });
-        
+
         sheetView.findViewById(R.id.cancel_button).setOnClickListener(v -> {
             animateButtonPress(v);
             bottomSheetDialog.dismiss();
         });
-        
+
         bottomSheetDialog.show();
     }
 
@@ -525,28 +484,28 @@ public class MainActivity extends AppCompatActivity {
         ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(button, "scaleY", 1f, 0.95f);
         ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(button, "scaleX", 0.95f, 1f);
         ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(button, "scaleY", 0.95f, 1f);
-        
+
         scaleDownX.setDuration(100);
         scaleDownY.setDuration(100);
         scaleUpX.setDuration(100);
         scaleUpY.setDuration(100);
-        
+
         scaleUpX.setInterpolator(new OvershootInterpolator());
         scaleUpY.setInterpolator(new OvershootInterpolator());
-        
+
         AnimatorSet scaleDown = new AnimatorSet();
         scaleDown.playTogether(scaleDownX, scaleDownY);
-        
+
         AnimatorSet scaleUp = new AnimatorSet();
         scaleUp.playTogether(scaleUpX, scaleUpY);
-        
+
         scaleDown.addListener(new android.animation.AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(android.animation.Animator animation) {
                 scaleUp.start();
             }
         });
-        
+
         scaleDown.start();
     }
 
@@ -554,18 +513,18 @@ public class MainActivity extends AppCompatActivity {
         view.setAlpha(0f);
         view.setScaleX(0.8f);
         view.setScaleY(0.8f);
-        
+
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f);
         ObjectAnimator scaleInX = ObjectAnimator.ofFloat(view, "scaleX", 0.8f, 1f);
         ObjectAnimator scaleInY = ObjectAnimator.ofFloat(view, "scaleY", 0.8f, 1f);
-        
+
         fadeIn.setDuration(300);
         scaleInX.setDuration(300);
         scaleInY.setDuration(300);
-        
+
         scaleInX.setInterpolator(new OvershootInterpolator());
         scaleInY.setInterpolator(new OvershootInterpolator());
-        
+
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(fadeIn, scaleInX, scaleInY);
         animatorSet.start();
@@ -639,7 +598,7 @@ public class MainActivity extends AppCompatActivity {
                 if (selectionOverlay != null) {
                     selectionOverlay.setVisibility(isSelected ? View.VISIBLE : View.GONE);
                 }
-                
+
                 title.setText(notification.getTitle());
                 message.setText(notification.getMessage());
                 time.setText(notification.getTime());
@@ -653,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
                 icon.setColorFilter(ContextCompat.getColor(itemView.getContext(), colorRes));
 
                 itemView.setOnClickListener(v -> listener.onItemClick(notification));
-                
+
                 itemView.setOnLongClickListener(v -> {
                     longClickListener.onItemLongClick(notification);
                     return true;

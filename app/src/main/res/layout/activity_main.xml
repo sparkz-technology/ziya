@@ -84,18 +84,15 @@
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <LinearLayout
+        <com.google.android.material.chip.ChipGroup
             android:id="@+id/filter_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:background="@drawable/filter_button_background"
-            android:padding="4dp">
-            <!-- Filter buttons will be added here programmatically -->
-        </LinearLayout>
+            app:chipSpacingHorizontal="8dp"
+            app:singleLine="false">
+            </com.google.android.material.chip.ChipGroup>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"

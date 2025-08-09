@@ -3,32 +3,24 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Light Theme -->
-    <color name="colorPrimaryLight">#6200EE</color>
+    <color name="colorPrimaryLight">#000000</color>
     <color name="colorOnPrimaryLight">#FFFFFF</color>
     <color name="colorSurfaceLight">#FFFFFF</color>
     <color name="colorOnSurfaceLight">#000000</color>
-    <color name="colorBackgroundLight">#F7F7F7</color>
+    <color name="colorBackgroundLight">#FFFFFF</color>
     <color name="colorSurfaceVariantLight">#E0E0E0</color>
 
-    <!-- Dark Theme -->
-    <color name="colorPrimaryDark">#BB86FC</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorOnPrimaryDark">#000000</color>
-    <color name="colorSurfaceDark">#121212</color>
+    <color name="colorSurfaceDark">#000000</color>
     <color name="colorOnSurfaceDark">#FFFFFF</color>
-    <color name="colorBackgroundDark">#1F1B24</color>
+    <color name="colorBackgroundDark">#000000</color>
     <color name="colorSurfaceVariantDark">#3A3A3A</color>
 
-    <!-- Notification Colors -->
     <color name="notif_success">#4CAF50</color>
     <color name="notif_error">#F44336</color>
     <color name="notif_warning">#FFC107</color>
     <color name="notif_info">#2196F3</color>
-    <color name="notif_unread_dot">#BB86FC</color>
+    <color name="notif_unread_dot">#000000</color>
 
-    <!-- Filter Button Inactive Colors (Dark Theme) -->
-    <color name="filter_inactive_success_dark">#1A4CAF50</color> <!-- 10% opacity green -->
-    <color name="filter_inactive_error_dark">#1AF44336</color>   <!-- 10% opacity red -->
-    <color name="filter_inactive_warning_dark">#1AFFC107</color><!-- 10% opacity yellow -->
-    <color name="filter_inactive_info_dark">#1A2196F3</color>   <!-- 10% opacity blue -->
-</resources>
+    <color name="filter_inactive_success_dark">#1A4CAF50</color> <color name="filter_inactive_error_dark">#1AF44336</color>   <color name="filter_inactive_warning_dark">#1AFFC107</color><color name="filter_inactive_info_dark">#1A2196F3</color>   </resources>
