@@ -9,6 +9,7 @@
         <item name="colorSurface">@color/colorSurfaceLight</item>
         <item name="colorOnSurface">@color/colorOnSurfaceLight</item>
         <item name="android:colorBackground">@color/colorBackgroundLight</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.Ziya" parent="Base.Theme.Ziya">

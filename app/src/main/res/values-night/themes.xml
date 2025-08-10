@@ -9,6 +9,7 @@
         <item name="colorSurface">@color/colorSurfaceDark</item>
         <item name="colorOnSurface">@color/colorOnSurfaceDark</item>
         <item name="android:colorBackground">@color/colorBackgroundDark</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.Ziya" parent="Base.Theme.Ziya">
