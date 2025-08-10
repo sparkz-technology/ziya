@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/ripple_rounded"
-    android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="4dp">
 
     <com.google.android.material.card.MaterialCardView
