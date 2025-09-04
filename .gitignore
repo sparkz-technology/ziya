@@ -1,0 +1,35 @@
+# Gradle files
+.gradle/
+build/
+**/build/
+
+# Local configuration
+local.properties
+keystore.properties
+
+# IDE files
+.idea/
+*.iml
+
+# Exclude specific IntelliJ/Android Studio configs
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# OS-generated files
+.DS_Store
+
+# Native builds
+.externalNativeBuild/
+.cxx/
+
+# Captures (screenshot/video from emulator)
+captures/
+
+# Others (optional)
+*.log
+*.keystore
+*.jks
