@@ -1,8 +1,9 @@
+package com.example.ziya
+
 import android.content.Context
 import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import com.example.ziya.OrbRenderer
 
 class OrbGLSurfaceView(context: Context, attrs: AttributeSet? = null) : GLSurfaceView(context, attrs) {
 
@@ -28,3 +29,4 @@ class OrbGLSurfaceView(context: Context, attrs: AttributeSet? = null) : GLSurfac
         renderer.setOrbState(state)
     }
 }
+
